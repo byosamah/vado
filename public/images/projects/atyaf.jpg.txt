@@ -1,0 +1,12 @@
+PLACEHOLDER - Replace with actual image
+
+Image: atyaf.jpg
+Project: Atyaf
+Category: Residential
+
+Recommended size: 800x600 pixels (landscape)
+Format: .jpg or .png
+
+Instructions:
+1. Delete this .txt file
+2. Add your image named exactly: atyaf.jpg

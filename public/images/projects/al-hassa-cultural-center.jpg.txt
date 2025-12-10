@@ -1,0 +1,12 @@
+PLACEHOLDER - Replace with actual image
+
+Image: al-hassa-cultural-center.jpg
+Project: Al Hassa Cultural Center
+Category: Public Sector
+
+Recommended size: 800x600 pixels (landscape)
+Format: .jpg or .png
+
+Instructions:
+1. Delete this .txt file
+2. Add your image named exactly: al-hassa-cultural-center.jpg

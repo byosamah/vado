@@ -1,0 +1,12 @@
+PLACEHOLDER - Replace with actual image
+
+Image: al-mashraq-strip-mall.jpg
+Project: Al Mashraq Strip Mall
+Category: Commercial
+
+Recommended size: 800x600 pixels (landscape)
+Format: .jpg or .png
+
+Instructions:
+1. Delete this .txt file
+2. Add your image named exactly: al-mashraq-strip-mall.jpg

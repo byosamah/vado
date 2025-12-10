@@ -1,0 +1,12 @@
+PLACEHOLDER - Replace with actual image
+
+Image: project-8.jpg
+Project: Project Coming Soon
+Category: TBD
+
+Recommended size: 800x600 pixels (landscape)
+Format: .jpg or .png
+
+Instructions:
+1. Delete this .txt file
+2. Add your image named exactly: project-8.jpg
