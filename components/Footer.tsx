@@ -1,6 +1,5 @@
 import React from 'react';
 import { useCursor } from '../context/CursorContext';
-import { Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const { setCursorState } = useCursor();
@@ -34,35 +33,13 @@ const Footer: React.FC = () => {
 
             <div>
               <h4 className="text-white uppercase tracking-widest text-xs mb-4">Contact</h4>
-              <p>+966 (XX) XXX XXXX</p>
-            </div>
-
-             <div>
-              <h4 className="text-white uppercase tracking-widest text-xs mb-4">Social</h4>
-              <div className="flex gap-4">
-                <a href="#" className="hover:text-white transition-colors"><Twitter size={20} /></a>
-                <a href="#" className="hover:text-white transition-colors"><Instagram size={20} /></a>
-                <a href="#" className="hover:text-white transition-colors"><Linkedin size={20} /></a>
-                <a href="#" className="hover:text-white transition-colors"><Youtube size={20} /></a>
-              </div>
+              <p>+966 542 900 447</p>
             </div>
           </div>
         </div>
 
-        <div className="mt-24 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
-          <p className="text-xs text-neutral-500 uppercase tracking-wider">© 2024 VISION Arch. & Engineering Consultants</p>
-
-          <div className="flex flex-col items-end">
-            <p className="text-lg mb-1">Join Our Team</p>
-            <a
-              href="mailto:careers@vado.sa"
-              className="text-xs text-neutral-500 uppercase tracking-widest hover:text-white transition-colors"
-              onMouseEnter={() => setCursorState('hover')}
-              onMouseLeave={() => setCursorState('default')}
-            >
-              Send CV to Careers
-            </a>
-          </div>
+        <div className="mt-24 pt-8 border-t border-white/10">
+          <p className="text-xs text-neutral-500 uppercase tracking-wider">© 2025 VISION Arch. & Engineering Consultants</p>
         </div>
 
       </div>

@@ -11,9 +11,8 @@ const Team: React.FC = () => {
 
   return (
     <section className="py-24 bg-white overflow-hidden">
-      <div className="px-6 md:px-12 mb-12 flex justify-between items-end">
-        <h2 className="text-3xl md:text-4xl font-medium">Leadership</h2>
-        <p className="text-sm text-neutral-400 uppercase tracking-widest hidden md:block">Scroll to explore</p>
+      <div className="px-6 md:px-12 mb-12">
+        <h2 className="text-3xl md:text-4xl font-medium">Team</h2>
       </div>
 
       <div 
@@ -30,11 +29,12 @@ const Team: React.FC = () => {
             className="min-w-[85vw] md:min-w-[400px] snap-center"
           >
             <div className="aspect-[3/4] overflow-hidden mb-6 relative group grayscale hover:grayscale-0 transition-all duration-700">
-              <img 
-                src={member.image} 
+              <img
+                src={member.image}
                 alt={member.name}
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
               />
+              {/* object-top = aligns image to top, showing full heads */}
             </div>
             <h3 className="text-xl font-medium">{member.name}</h3>
             <p className="text-sm text-neutral-500 mt-1 uppercase tracking-wider">{member.role}</p>

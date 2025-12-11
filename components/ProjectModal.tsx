@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Calendar, User } from 'lucide-react';
+import { X, MapPin, Calendar, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Project } from '../types';
 import { useCursor } from '../context/CursorContext';
 
@@ -12,6 +12,30 @@ interface ProjectModalProps {
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose }) => {
   const { setCursorState } = useCursor();
+
+  // State for image slider - tracks which image is currently shown
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Get all images for this project (use images array if available, otherwise just the single image)
+  const projectImages = project?.images || (project?.image ? [project.image] : []);
+  const hasMultipleImages = projectImages.length > 1;
+
+  // Go to next image in slider
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % projectImages.length);
+  };
+
+  // Go to previous image in slider
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + projectImages.length) % projectImages.length);
+  };
+
+  // Reset to first image when modal opens with new project
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentImageIndex(0);
+    }
+  }, [isOpen, project?.id]);
 
   // Close modal on ESC key press
   useEffect(() => {
@@ -77,15 +101,67 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose })
               <X size={24} className="text-[#1A1A1A]" />
             </button>
 
-            {/* Project image */}
+            {/* Project image slider */}
             <div className="relative w-full h-[40vh] md:h-[50vh] overflow-hidden">
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-full object-cover"
-              />
+              {/* Current image with fade animation */}
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentImageIndex}
+                  src={projectImages[currentImageIndex]}
+                  alt={`${project.title} - Image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </AnimatePresence>
+
               {/* Gradient overlay for text readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+              {/* Navigation arrows - only show if multiple images */}
+              {hasMultipleImages && (
+                <>
+                  {/* Previous button */}
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/40 transition-colors z-10"
+                    onMouseEnter={() => setCursorState('hover')}
+                    onMouseLeave={() => setCursorState('default')}
+                  >
+                    <ChevronLeft size={24} className="text-white" />
+                  </button>
+                  {/* Next button */}
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/40 transition-colors z-10"
+                    onMouseEnter={() => setCursorState('hover')}
+                    onMouseLeave={() => setCursorState('default')}
+                  >
+                    <ChevronRight size={24} className="text-white" />
+                  </button>
+                </>
+              )}
+
+              {/* Dot indicators - only show if multiple images */}
+              {hasMultipleImages && (
+                <div className="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                  {projectImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === currentImageIndex
+                          ? 'bg-white w-6'  // Active dot is wider
+                          : 'bg-white/50 hover:bg-white/80'
+                      }`}
+                      onMouseEnter={() => setCursorState('hover')}
+                      onMouseLeave={() => setCursorState('default')}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Title overlay on image */}
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">

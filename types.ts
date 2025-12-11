@@ -3,6 +3,7 @@ export interface Project {
   title: string;
   category: string;
   image: string;
+  images?: string[];  // Optional array for multiple images in modal slider
   // Optional fields for modal details
   description?: string;
   year?: string;

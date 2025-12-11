@@ -4,22 +4,22 @@ import { useCursor } from '../context/CursorContext';
 
 const TABS = [
   {
-    id: 'history',
-    label: 'History',
-    title: 'Founded in 1994',
-    content: "Established in 1994 under the visionary leadership of Architect Khalid Al-Mulla, VADO has consistently demonstrated a track record of excellence. The firm has successfully conducted in-depth studies, meticulously designed projects, provided detailed engineering expertise, and demonstrated effective project management across hotels, resorts, hospitals, compounds, residential projects, and urban planning initiatives."
-  },
-  {
     id: 'vision',
     label: 'Vision',
-    title: 'Leading the Region',
-    content: "To shape meaningful spaces through thoughtful design and engineering excellence—creating environments that inspire, serve, and sustain communities. We aspire to achieve leadership in providing design and construction services for buildings in the Eastern region."
+    title: 'Our Vision',
+    content: "To shape meaningful spaces through thoughtful design and engineering excellence—creating environments that inspire, serve, and sustain communities."
   },
   {
     id: 'mission',
     label: 'Mission',
-    title: 'Precision & Balance',
+    title: 'Our Mission',
     content: "To provide integrated architectural and engineering solutions rooted in innovation, precision, and client-focused collaboration, ensuring every project achieves its full potential from concept to completion."
+  },
+  {
+    id: 'values',
+    label: 'Values',
+    title: 'Our Values',
+    content: "Excellence — Pursuing the highest standards in design and execution.\n\nIntegrity — Operating with honesty, transparency, and respect.\n\nInnovation — Embracing creativity and forward-thinking engineering.\n\nResponsibility — Designing sustainably with future generations in mind.\n\nPartnership — Collaborating closely with clients, stakeholders, and communities."
   }
 ];
 
@@ -34,20 +34,17 @@ const About: React.FC = () => {
           
           {/* Left Column */}
           <div className="lg:col-span-4">
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-4xl md:text-5xl font-semibold mb-8"
             >
-              Design for Life.
+              About VADO
             </motion.h2>
             <div className="w-12 h-1 bg-black mb-8" />
-            <p className="text-lg text-neutral-600 font-serif italic">
-              "The essence of our success lies in the quality of our people."
-            </p>
-            <p className="mt-4 text-sm font-medium uppercase tracking-wide">
-              — Arch. Khalid Al Mulla
+            <p className="text-base md:text-lg text-neutral-600 leading-relaxed">
+              VADO (VISION Arch. & Engineering Consultants) is a multidisciplinary consultancy specialized in architecture, engineering, and project development. With decades of experience, VADO delivers innovative, functional, and sustainable solutions tailored to meet the evolving needs of communities and clients across Saudi Arabia.
             </p>
           </div>
 
@@ -85,7 +82,7 @@ const About: React.FC = () => {
                 className="min-h-[200px]"
               >
                 <h3 className="text-2xl md:text-3xl font-light mb-6">{activeTab.title}</h3>
-                <p className="text-base md:text-lg leading-relaxed text-neutral-600 max-w-2xl">
+                <p className="text-base md:text-lg leading-relaxed text-neutral-600 max-w-2xl whitespace-pre-line">
                   {activeTab.content}
                 </p>
               </motion.div>
