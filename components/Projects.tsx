@@ -56,11 +56,8 @@ const Projects: React.FC = () => {
   return (
     <section id="projects" className="py-24 md:py-32 px-6 md:px-12 bg-white relative overflow-hidden">
       <div className="max-w-[1920px] mx-auto">
-        <div className="flex justify-between items-end mb-16 border-b border-black/10 pb-4">
+        <div className="mb-16 border-b border-black/10 pb-4">
           <h2 className="text-sm tracking-widest uppercase">Selected Works</h2>
-          <span className="text-sm text-neutral-400">
-            {visibleCount < 10 ? `0${visibleCount}` : visibleCount} / {PROJECTS.length < 10 ? `0${PROJECTS.length}` : PROJECTS.length}
-          </span>
         </div>
 
         <div 
