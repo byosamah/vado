@@ -1,0 +1,227 @@
+@import "tailwindcss";
+
+/* ============================================
+   HIROSHI DESIGN SYSTEM
+   ============================================ */
+
+:root {
+  /* Colors */
+  --color-background: #ffffff;
+  --color-text-primary: #000000;
+  --color-text-secondary: #69727D;
+  --color-text-muted: #999999;
+  --color-accent: #000000;
+  --color-border: #e5e5e5;
+  --color-surface: #f5f5f5;
+
+  /* Typography */
+  --font-primary: var(--font-nunito-sans), 'Nunito Sans', sans-serif;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  --spacing-4xl: 96px;
+  --spacing-5xl: 128px;
+
+  /* Layout */
+  --content-max-width: 1400px;
+  --section-padding-x: 80px;
+  --section-padding-y: 120px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-text-primary);
+  --font-sans: var(--font-primary);
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 {
+  font-size: 72px;
+  letter-spacing: -1px;
+}
+
+h2 {
+  font-size: 45px;
+  letter-spacing: -0.5px;
+}
+
+h3 {
+  font-size: 32px;
+}
+
+h4 {
+  font-size: 24px;
+}
+
+h5 {
+  font-size: 18px;
+}
+
+h6 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding-left: var(--section-padding-x);
+  padding-right: var(--section-padding-x);
+}
+
+.section {
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+}
+
+/* Underline hover effect */
+.underline-hover {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-base);
+}
+
+.underline-hover:hover::after {
+  transform: scaleX(1);
+}
+
+/* Image hover scale */
+.image-hover-scale {
+  overflow: hidden;
+}
+
+.image-hover-scale img {
+  transition: transform var(--transition-slow);
+}
+
+.image-hover-scale:hover img {
+  transform: scale(1.05);
+}
+
+/* ============================================
+   SWIPER OVERRIDES
+   ============================================ */
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background: #ffffff;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1200px) {
+  :root {
+    --section-padding-x: 60px;
+    --section-padding-y: 100px;
+  }
+
+  h1 { font-size: 56px; }
+  h2 { font-size: 38px; }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-padding-x: 24px;
+    --section-padding-y: 80px;
+  }
+
+  h1 { font-size: 42px; }
+  h2 { font-size: 32px; }
+  h3 { font-size: 26px; }
+  h4 { font-size: 20px; }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --section-padding-x: 16px;
+    --section-padding-y: 60px;
+  }
+
+  h1 { font-size: 32px; }
+  h2 { font-size: 26px; }
+}
