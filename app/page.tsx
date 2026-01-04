@@ -27,14 +27,14 @@ import Footer from "@/components/layout/Footer";
 // Section Components
 import HeroSlider from "@/components/sections/HeroSlider";
 import AboutSection from "@/components/sections/AboutSection";
-import ServicesLinks from "@/components/sections/ServicesLinks";
-import FeatureCards from "@/components/sections/FeatureCards";
+// import ServicesLinks from "@/components/sections/ServicesLinks"; // TEMPORARILY HIDDEN
+// import FeatureCards from "@/components/sections/FeatureCards"; // TEMPORARILY HIDDEN
 import PortfolioShowcase from "@/components/sections/PortfolioShowcase";
 import ServicesTabs from "@/components/sections/ServicesTabs";
 import QuoteBlock from "@/components/sections/QuoteBlock";
 import TeamGrid from "@/components/sections/TeamGrid";
 import TestimonialsSlider from "@/components/sections/TestimonialsSlider";
-import BlogGrid from "@/components/sections/BlogGrid";
+// import BlogGrid from "@/components/sections/BlogGrid"; // TEMPORARILY HIDDEN
 import ContactSection from "@/components/sections/ContactSection";
 import CTABanner from "@/components/sections/CTABanner";
 
@@ -51,11 +51,13 @@ export default function Home() {
         {/* About - Two column layout with text and image */}
         <AboutSection />
 
-        {/* Services Links - Three column text links row */}
+        {/* Services Links - TEMPORARILY HIDDEN
         <ServicesLinks />
+        */}
 
-        {/* Feature Cards - Two equal-width image cards */}
+        {/* Feature Cards - TEMPORARILY HIDDEN
         <FeatureCards />
+        */}
 
         {/* Portfolio - Interactive sidebar with Swiper carousel */}
         <PortfolioShowcase />
@@ -73,7 +75,9 @@ export default function Home() {
         <TestimonialsSlider />
 
         {/* Blog - Four column grid of blog posts */}
+        {/* TEMPORARILY HIDDEN - Uncomment to restore:
         <BlogGrid />
+        */}
 
         {/* Contact - Form and contact information */}
         <ContactSection />

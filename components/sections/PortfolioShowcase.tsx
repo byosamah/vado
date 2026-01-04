@@ -9,6 +9,7 @@
  * - Left sidebar: "Our work" label + clickable project titles
  * - Right: Swiper carousel with portfolio images
  * - Clicking title navigates to that slide
+ * - Clicking image opens project detail page
  */
 
 import { useState } from "react";
@@ -16,31 +17,21 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { fadeInLeft, fadeInRight, defaultViewport } from "@/lib/animations";
+import { getAllProjects } from "@/lib/projects";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
 
-const portfolioItems = [
-  {
-    id: 1,
-    title: "Al Mashraq Strip Mall",
-    category: "Commercial",
-    image: "/images/portfolio-almashraq.jpg",
-  },
-  {
-    id: 2,
-    title: "The Feel of Villa Yun",
-    category: "Interiors",
-    image: "/images/portfolio-1.png",
-  },
-  {
-    id: 3,
-    title: "Nomus Art House",
-    category: "Exteriors",
-    image: "/images/portfolio-2.png",
-  },
-];
+// Get projects from centralized data
+const portfolioItems = getAllProjects().map((project, index) => ({
+  id: index + 1,
+  slug: project.slug,
+  title: project.title,
+  category: project.category,
+  image: project.heroImage,
+}));
 
 export default function PortfolioShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -76,21 +67,21 @@ export default function PortfolioShowcase() {
             {/* Project Titles List */}
             <div className="space-y-6">
               {portfolioItems.map((item, index) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleTitleClick(index)}
-                  className={`
-                    block text-left w-full
-                    text-2xl md:text-3xl font-light
-                    transition-colors duration-300
-                    ${activeIndex === index
-                      ? "text-black"
-                      : "text-gray-400 hover:text-gray-600"
-                    }
-                  `}
-                >
-                  {item.title}
-                </button>
+                <div key={item.id}>
+                  <Link
+                    href={`/projects/${item.slug}`}
+                    onMouseEnter={() => handleTitleClick(index)}
+                    className={`
+                      block text-left w-full
+                      text-2xl md:text-3xl font-light
+                      transition-colors duration-300
+                      hover:text-black
+                      ${activeIndex === index ? "text-black" : "text-gray-400"}
+                    `}
+                  >
+                    {item.title}
+                  </Link>
+                </div>
               ))}
             </div>
 
@@ -133,11 +124,14 @@ export default function PortfolioShowcase() {
             >
               {portfolioItems.map((item) => (
                 <SwiperSlide key={item.id}>
-                  <div className="relative w-full h-full overflow-hidden">
+                  <Link
+                    href={`/projects/${item.slug}`}
+                    className="relative block w-full h-full overflow-hidden group"
+                  >
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     {/* Category overlay */}
                     <div className="absolute bottom-6 left-6">
@@ -145,7 +139,7 @@ export default function PortfolioShowcase() {
                         {item.category}
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 </SwiperSlide>
               ))}
             </Swiper>

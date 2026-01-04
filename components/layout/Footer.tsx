@@ -25,11 +25,12 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link
               href="/"
-              className="text-3xl font-semibold tracking-wider text-white mb-6 block"
+              className="text-3xl font-semibold tracking-wider mb-6 block"
+              style={{ color: "#ffffff" }}
             >
               VADO
             </Link>
-            <p className="text-white/60 leading-relaxed max-w-md">
+            <p className="leading-relaxed max-w-md" style={{ color: "rgba(255,255,255,0.6)" }}>
               VISION Arch. & Engineering Consultants. Transforming ideas into
               built realities through thoughtful design and engineering
               excellence since 1994.
@@ -38,25 +39,27 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white font-medium mb-6 text-sm tracking-widest uppercase">
+            <h4 className="font-medium mb-6 text-sm tracking-widest uppercase" style={{ color: "#ffffff" }}>
               Contact
             </h4>
             <div className="space-y-4">
               <a
                 href="mailto:info@vado.sa"
-                className="flex items-center gap-3 text-white/60 hover:text-white transition-colors"
+                className="flex items-center gap-3 hover:opacity-100 transition-opacity"
+                style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 <Mail className="w-4 h-4" />
                 info@vado.sa
               </a>
               <a
                 href="tel:+966542900447"
-                className="flex items-center gap-3 text-white/60 hover:text-white transition-colors"
+                className="flex items-center gap-3 hover:opacity-100 transition-opacity"
+                style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 <Phone className="w-4 h-4" />
                 +966 542 900 447
               </a>
-              <div className="flex items-start gap-3 text-white/60">
+              <div className="flex items-start gap-3" style={{ color: "rgba(255,255,255,0.6)" }}>
                 <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
                 <span>
                   Al Fardan Tower – Office 401
@@ -69,31 +72,35 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-medium mb-6 text-sm tracking-widest uppercase">
+            <h4 className="font-medium mb-6 text-sm tracking-widest uppercase" style={{ color: "#ffffff" }}>
               Quick Links
             </h4>
             <div className="space-y-3">
               <Link
                 href="#portfolio"
-                className="block text-white/60 hover:text-white transition-colors"
+                className="block hover:opacity-100 transition-opacity"
+                style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 Projects
               </Link>
               <Link
                 href="#about"
-                className="block text-white/60 hover:text-white transition-colors"
+                className="block hover:opacity-100 transition-opacity"
+                style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 About
               </Link>
               <Link
                 href="#services"
-                className="block text-white/60 hover:text-white transition-colors"
+                className="block hover:opacity-100 transition-opacity"
+                style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 Services
               </Link>
               <Link
                 href="#contact"
-                className="block text-white/60 hover:text-white transition-colors"
+                className="block hover:opacity-100 transition-opacity"
+                style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 Contact
               </Link>
@@ -104,7 +111,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           {/* Copyright */}
-          <p className="text-sm text-white/40">
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
             © {new Date().getFullYear()} VISION Arch. & Engineering Consultants.
             All rights reserved.
           </p>
@@ -115,11 +122,8 @@ export default function Footer() {
               <a
                 key={link.label}
                 href={link.href}
-                className="
-                  text-sm text-white/40
-                  hover:text-white
-                  transition-colors duration-300
-                "
+                className="text-sm hover:opacity-100 transition-opacity"
+                style={{ color: "rgba(255,255,255,0.4)" }}
               >
                 {link.label}
               </a>

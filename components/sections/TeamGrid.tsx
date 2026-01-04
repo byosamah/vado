@@ -14,7 +14,6 @@ import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer, defaultViewport } from "@/lib/animations";
 
 const teamMembers = [
-  // VADO Leadership Team (Real)
   {
     id: 1,
     name: "Arch. Khalid Al Mulla",
@@ -26,37 +25,6 @@ const teamMembers = [
     name: "Arch. Mutaz Al Mulla",
     role: "Vice President & Chief Architect",
     image: "/images/team-mutaz.jpg",
-  },
-  {
-    id: 3,
-    name: "Eng. Mohammed Zakariya",
-    role: "Chief Electro-Mechanical Engineer",
-    image: "/images/team-mohammed.png",
-  },
-  // Additional Team Members
-  {
-    id: 4,
-    name: "Sarah Ahmed",
-    role: "Senior Architect",
-    image: "/images/team-1.png",
-  },
-  {
-    id: 5,
-    name: "Omar Hassan",
-    role: "Structural Engineer",
-    image: "/images/team-2.png",
-  },
-  {
-    id: 6,
-    name: "Fatima Al-Rashid",
-    role: "Interior Designer",
-    image: "/images/team-3.png",
-  },
-  {
-    id: 7,
-    name: "Ahmed Al-Farsi",
-    role: "Project Manager",
-    image: "/images/team-4.png",
   },
 ];
 
@@ -75,7 +43,7 @@ export default function TeamGrid() {
           <div className="flex items-center gap-3 mb-6">
             <span className="w-2 h-2 bg-black rounded-full" />
             <span className="text-sm tracking-widest uppercase text-gray-600">
-              The team
+              Leadership
             </span>
           </div>
           <h2>Meet our people</h2>
@@ -83,7 +51,7 @@ export default function TeamGrid() {
 
         {/* Team Grid */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"

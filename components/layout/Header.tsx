@@ -25,7 +25,11 @@ const navItems = [
   { label: "Contact", href: "#contact" },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  forceSolid?: boolean; // Force solid background (for pages without dark hero)
+}
+
+export default function Header({ forceSolid = false }: HeaderProps) {
   // Track scroll position to determine header background
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -59,24 +63,27 @@ export default function Header() {
       className={`
         fixed top-0 left-0 right-0 z-50
         transition-all duration-300 ease-out
-        ${isScrolled
-          ? "bg-white shadow-sm"
-          : "bg-transparent"
+        ${isMobileMenuOpen
+          ? "bg-black"
+          : (forceSolid || isScrolled)
+            ? "bg-white"
+            : "bg-transparent"
         }
       `}
     >
       <div className="container">
         <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
-          <Link
-            href="/"
-            className={`
-              text-2xl font-semibold tracking-wider
-              transition-colors duration-300
-              ${isScrolled ? "text-black" : "text-white"}
-            `}
-          >
-            VADO
+          <Link href="/" className="block">
+            <img
+              src="/logo.svg"
+              alt="VADO Consultants"
+              className={`
+                h-8 md:h-10 w-auto
+                transition-all duration-300
+                ${isMobileMenuOpen || (!forceSolid && !isScrolled) ? "brightness-0 invert" : ""}
+              `}
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -85,15 +92,8 @@ export default function Header() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`
-                  text-sm tracking-wide uppercase
-                  underline-hover
-                  transition-colors duration-300
-                  ${isScrolled
-                    ? "text-gray-800 hover:text-black"
-                    : "text-white/90 hover:text-white"
-                  }
-                `}
+                style={{ color: (forceSolid || isScrolled) ? "#1f2937" : "#ffffff" }}
+                className="text-sm tracking-wide uppercase underline-hover transition-colors duration-300"
               >
                 {item.label}
               </Link>
@@ -106,7 +106,7 @@ export default function Header() {
             className={`
               md:hidden p-2
               transition-colors duration-300
-              ${isScrolled ? "text-black" : "text-white"}
+              ${isMobileMenuOpen || (!forceSolid && !isScrolled) ? "text-white" : "text-black"}
             `}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -124,7 +124,7 @@ export default function Header() {
         className={`
           md:hidden
           fixed inset-0 top-20
-          bg-white
+          bg-black
           transition-all duration-300 ease-out
           ${isMobileMenuOpen
             ? "opacity-100 pointer-events-auto"
@@ -138,7 +138,7 @@ export default function Header() {
               key={item.label}
               href={item.href}
               onClick={handleNavClick}
-              className="text-lg tracking-wide uppercase text-gray-800 hover:text-black"
+              className="text-lg tracking-wide uppercase text-white hover:text-white/80"
             >
               {item.label}
             </Link>

@@ -1,141 +1,197 @@
 "use client";
 
 /**
- * Services Tabs Component
- * =======================
- * Interactive tabbed section showcasing different services.
+ * Services Accordion Component
+ * ============================
+ * Vertical accordion showcasing VADO services.
  *
- * Features:
- * - Four tabs: Urban Planning, Exterior, Residential, Interior
- * - Each tab shows: Large image + description + read more link
- * - Fade transition on content swap
+ * Design:
+ * - 4 columns with vertical text titles
+ * - +/− icons for expand/collapse
+ * - Only one item expanded at a time
+ * - Smooth width animation on expand
+ * - Portrait image + description in expanded state
  */
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fadeIn, fadeInUp, defaultViewport } from "@/lib/animations";
 
 const services = [
-  {
-    id: "project-management",
-    label: "Project Management",
-    image: "/images/service-urban.png",
-    description:
-      "Full-cycle project management ensures seamless coordination, cost control, time efficiency, and strict adherence to quality standards. We oversee every phase from concept to completion.",
-  },
   {
     id: "architectural-design",
     label: "Architectural Design",
     image: "/images/service-exterior.png",
     description:
-      "Comprehensive architectural solutions that balance form, function, and identity, transforming concepts into refined, buildable spaces that inspire and endure.",
+      "Creative architectural solutions that balance aesthetics, function, and context turning vision into architecture.",
+  },
+  {
+    id: "engineering-design",
+    label: "Engineering Design",
+    image: "/images/service-urban.png",
+    description:
+      "Integrated structural and MEP engineering ensuring safety, efficiency, and sustainability in every project.",
+  },
+  {
+    id: "project-management",
+    label: "Project Management",
+    image: "/images/service-interior.png",
+    description:
+      "Comprehensive project management from concept to completion, ensuring quality, schedule, and budget alignment.",
   },
   {
     id: "site-supervision",
     label: "Site Supervision",
     image: "/images/service-residential.png",
     description:
-      "Dedicated on-site supervision guarantees precise execution, compliance, and construction excellence. Our team ensures every detail meets the highest standards.",
-  },
-  {
-    id: "engineering-design",
-    label: "Engineering Design",
-    image: "/images/service-interior.png",
-    description:
-      "Integrated engineering services across structural, mechanical, electrical, and plumbing disciplines to ensure safe, efficient, and sustainable building performance.",
+      "Dedicated on-site supervision delivering precision, consistency, and construction excellence.",
   },
 ];
 
 export default function ServicesTabs() {
-  const [activeTab, setActiveTab] = useState(services[0].id);
-  const activeService = services.find((s) => s.id === activeTab)!;
+  // Track which service is expanded (default: last one like vado.sa)
+  const [expandedId, setExpandedId] = useState<string | null>("site-supervision");
+
+  const handleToggle = (id: string) => {
+    // If clicking the expanded one, collapse it; otherwise expand the clicked one
+    setExpandedId(expandedId === id ? null : id);
+  };
 
   return (
-    <section id="services" className="section bg-white">
-      <div className="container">
-        {/* Section Header */}
-        <motion.div
-          className="mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={defaultViewport}
-          variants={fadeInUp}
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-2 h-2 bg-black rounded-full" />
-            <span className="text-sm tracking-widest uppercase text-gray-600">
-              Services
-            </span>
-          </div>
-          <h2>What we do</h2>
-        </motion.div>
+    <section id="services" className="bg-white">
+      {/* Top border */}
+      <div className="border-t border-gray-200" />
 
-        {/* Tabs Navigation */}
-        <motion.div
-          className="flex flex-wrap gap-4 md:gap-8 mb-12"
-          initial="hidden"
-          whileInView="visible"
-          viewport={defaultViewport}
-          variants={fadeInUp}
-        >
-          {services.map((service) => (
-            <button
+      {/* Desktop: Horizontal accordion */}
+      <div className="hidden md:flex h-[66vh] min-h-[500px]">
+        {services.map((service) => {
+          const isExpanded = expandedId === service.id;
+
+          return (
+            <div
               key={service.id}
-              onClick={() => setActiveTab(service.id)}
+              onClick={() => handleToggle(service.id)}
               className={`
-                text-lg md:text-xl font-light
-                pb-2 border-b-2
-                transition-all duration-300
-                ${activeTab === service.id
-                  ? "text-black border-black"
-                  : "text-gray-400 border-transparent hover:text-gray-600"
-                }
+                relative border-l border-gray-200 cursor-pointer
+                transition-all duration-500 ease-out overflow-hidden
+                ${isExpanded ? "flex-[4]" : "flex-[1]"}
               `}
             >
-              {service.label}
-            </button>
-          ))}
-        </motion.div>
+              {/* +/− Icon - Top Right */}
+              <div className="absolute top-6 right-6 z-10">
+                <span className="text-2xl font-light text-gray-400">
+                  {isExpanded ? "−" : "+"}
+                </span>
+              </div>
 
-        {/* Tab Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-          >
-            {/* Image */}
-            <div className="image-hover-scale">
-              <img
-                src={activeService.image}
-                alt={activeService.label}
-                className="w-full h-auto object-cover aspect-[4/3]"
-              />
+              {/* Content Container */}
+              <div className="flex h-full">
+                {/* Vertical Title - Always visible */}
+                <div className="flex items-end justify-start p-6 min-w-[60px]">
+                  <h3
+                    className="text-2xl font-light tracking-wide whitespace-nowrap"
+                    style={{
+                      writingMode: "vertical-lr",
+                      transform: "rotate(180deg)",
+                    }}
+                  >
+                    {service.label}
+                  </h3>
+                </div>
+
+                {/* Expanded Content - Image + Description */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3, delay: 0.2 }}
+                      className="flex flex-1 gap-8 p-6 pr-12 pt-12"
+                    >
+                      {/* Image */}
+                      <div className="w-1/2 h-full">
+                        <img
+                          src={service.image}
+                          alt={service.label}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      {/* Description */}
+                      <div className="w-1/2 flex flex-col justify-center">
+                        <p className="text-base leading-relaxed text-gray-600 mb-6">
+                          {service.description}
+                        </p>
+                        <a
+                          href="#"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-sm tracking-wide underline text-gray-800 hover:text-black transition-colors"
+                        >
+                          read more
+                        </a>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
+          );
+        })}
+      </div>
 
-            {/* Description */}
-            <div className="space-y-6">
-              <p className="text-lg leading-relaxed text-gray-600">
-                {activeService.description}
-              </p>
-              <a
-                href="#"
-                className="
-                  inline-block
-                  text-sm tracking-widest uppercase
-                  underline-hover
-                  text-gray-800 hover:text-black
-                  transition-colors duration-300
-                "
+      {/* Mobile: Vertical accordion */}
+      <div className="md:hidden">
+        {services.map((service) => {
+          const isExpanded = expandedId === service.id;
+
+          return (
+            <div
+              key={service.id}
+              className="border-b border-gray-200"
+            >
+              {/* Header */}
+              <button
+                onClick={() => handleToggle(service.id)}
+                className="w-full flex items-center justify-between p-6"
               >
-                Read more
-              </a>
+                <h3 className="text-xl font-light">{service.label}</h3>
+                <span className="text-2xl font-light text-gray-400">
+                  {isExpanded ? "−" : "+"}
+                </span>
+              </button>
+
+              {/* Expandable Content */}
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-6 pb-6 space-y-4">
+                      <img
+                        src={service.image}
+                        alt={service.label}
+                        className="w-full h-48 object-cover"
+                      />
+                      <p className="text-base leading-relaxed text-gray-600">
+                        {service.description}
+                      </p>
+                      <a
+                        href="#"
+                        className="inline-block text-sm tracking-wide underline text-gray-800"
+                      >
+                        read more
+                      </a>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </motion.div>
-        </AnimatePresence>
+          );
+        })}
       </div>
     </section>
   );

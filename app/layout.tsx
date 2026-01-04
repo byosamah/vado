@@ -9,8 +9,11 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Hiroshi – Architecture and Interior Design",
-  description: "A Contemporary Theme for Creative Business",
+  title: "VADO Consultants | Architecture & Engineering Studio",
+  description: "Khobar-based architecture and engineering consultants since 1994. Delivering excellence in urban, landscape, cultural, retail, hospitality, and residential projects across Saudi Arabia.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

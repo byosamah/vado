@@ -49,7 +49,7 @@ export default function HeroSlider() {
   return (
     <section className="relative h-screen w-full">
       {/* VADO Tagline - Top Left */}
-      <div className="absolute top-32 left-0 z-10">
+      <div className="absolute top-32 left-0 right-0 z-10">
         <div className="container">
           <span className="text-sm tracking-widest uppercase text-white/70">
             Est. 1994 — Al Khobar

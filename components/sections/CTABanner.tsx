@@ -52,11 +52,13 @@ export default function CTABanner() {
                 inline-block
                 px-8 py-4
                 text-sm tracking-widest uppercase
-                text-white
                 border border-white
-                hover:bg-white hover:text-black
+                hover:bg-white
                 transition-all duration-300
               "
+              style={{ color: "#ffffff" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#000000")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#ffffff")}
             >
               Start Your Project
             </Link>
