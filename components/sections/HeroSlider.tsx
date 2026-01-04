@@ -16,6 +16,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 
 // Import Swiper styles
@@ -73,14 +74,18 @@ export default function HeroSlider() {
         }}
         className="h-full w-full"
       >
-        {slides.map((slide) => (
+        {slides.map((slide, index) => (
           <SwiperSlide key={slide.id}>
             {/* Slide Container */}
             <div className="relative h-full w-full">
-              {/* Background Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: `url(${slide.image})` }}
+              {/* Background Image - Optimized with Next.js Image */}
+              <Image
+                src={slide.image}
+                alt={slide.title}
+                fill
+                className="object-cover"
+                priority={index === 0}
+                sizes="100vw"
               />
 
               {/* Dark Gradient Overlay - for text readability */}

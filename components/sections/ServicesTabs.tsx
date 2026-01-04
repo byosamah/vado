@@ -15,6 +15,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 const services = [
   {
@@ -109,11 +110,13 @@ export default function ServicesTabs() {
                       className="flex flex-1 gap-8 p-6 pr-12 pt-12"
                     >
                       {/* Image */}
-                      <div className="w-1/2 h-full">
-                        <img
+                      <div className="w-1/2 h-full relative">
+                        <Image
                           src={service.image}
                           alt={service.label}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
                         />
                       </div>
 
@@ -171,11 +174,15 @@ export default function ServicesTabs() {
                     className="overflow-hidden"
                   >
                     <div className="px-6 pb-6 space-y-4">
-                      <img
-                        src={service.image}
-                        alt={service.label}
-                        className="w-full h-48 object-cover"
-                      />
+                      <div className="relative w-full h-48">
+                        <Image
+                          src={service.image}
+                          alt={service.label}
+                          fill
+                          className="object-cover"
+                          sizes="100vw"
+                        />
+                      </div>
                       <p className="text-base leading-relaxed text-gray-600">
                         {service.description}
                       </p>

@@ -18,6 +18,7 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { fadeInLeft, fadeInRight, defaultViewport } from "@/lib/animations";
 import { getAllProjects } from "@/lib/projects";
 
@@ -122,19 +123,22 @@ export default function PortfolioShowcase() {
               onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
               className="w-full aspect-[4/3]"
             >
-              {portfolioItems.map((item) => (
+              {portfolioItems.map((item, index) => (
                 <SwiperSlide key={item.id}>
                   <Link
                     href={`/projects/${item.slug}`}
                     className="relative block w-full h-full overflow-hidden group"
                   >
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 1024px) 100vw, 66vw"
+                      priority={index === 0}
                     />
                     {/* Category overlay */}
-                    <div className="absolute bottom-6 left-6">
+                    <div className="absolute bottom-6 left-6 z-10">
                       <span className="text-sm tracking-widest uppercase text-white/80">
                         {item.category}
                       </span>

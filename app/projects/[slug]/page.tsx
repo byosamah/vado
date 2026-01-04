@@ -7,6 +7,7 @@
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -83,11 +84,14 @@ export default async function ProjectPage({
         </div>
 
         {/* Hero Image — Full Width */}
-        <div className="w-full">
-          <img
+        <div className="relative w-full h-[60vh]">
+          <Image
             src={project.heroImage}
             alt={project.title}
-            className="w-full h-[60vh] object-cover"
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
           />
         </div>
 
@@ -147,11 +151,13 @@ export default async function ProjectPage({
           <div className="container pb-16 md:pb-24">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {project.gallery.slice(1).map((image, index) => (
-                <div key={index} className="aspect-[4/3] overflow-hidden">
-                  <img
+                <div key={index} className="relative aspect-[4/3] overflow-hidden">
+                  <Image
                     src={image}
                     alt={`${project.title} - Image ${index + 2}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 </div>
               ))}
