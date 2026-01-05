@@ -29,19 +29,25 @@ const slides = [
   {
     id: 1,
     image: "/images/hero-1.png",
-    title: "Al Mashraq Strip Mall",
-    category: "Commercial",
+    title: "Modern Villa Design",
+    category: "Residential",
   },
   {
     id: 2,
     image: "/images/hero-2.png",
-    title: "Urban Planning Excellence",
-    category: "Design",
+    title: "Sculptural Excellence",
+    category: "Art & Design",
   },
   {
     id: 3,
     image: "/images/hero-3.png",
-    title: "Residential Innovation",
+    title: "Sunset Serenity",
+    category: "Sculpture",
+  },
+  {
+    id: 4,
+    image: "/images/hero-4.png",
+    title: "Contemporary Living",
     category: "Architecture",
   },
 ];
