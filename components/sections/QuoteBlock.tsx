@@ -1,39 +1,20 @@
-"use client";
-
-/**
- * Quote Block Component
- * =====================
- * Large typography quote section with elegant centered styling.
- */
-
-import { motion } from "framer-motion";
-import { fadeInUp, defaultViewport } from "@/lib/animations";
+import { Reveal } from "@/components/Reveal";
 
 export default function QuoteBlock() {
   return (
-    <section className="section bg-gray-50">
+    <section className="section bg-[var(--color-surface)]">
       <div className="container">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={defaultViewport}
-          variants={fadeInUp}
-        >
-          {/* Quote Text */}
-          <blockquote className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed text-gray-800">
-            "To shape meaningful spaces through thoughtful design and engineering
-            excellence—creating environments that inspire, serve, and sustain
-            communities."
+        <Reveal className="max-w-4xl mx-auto text-center">
+          <h2 className="sr-only">Our Vision</h2>
+          <blockquote className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed text-[var(--color-text-primary)]">
+            &ldquo;To shape meaningful spaces through thoughtful design and
+            engineering excellence — creating environments that inspire, serve,
+            and sustain communities.&rdquo;
           </blockquote>
-
-          {/* Attribution */}
-          <div className="mt-8">
-            <p className="text-sm tracking-widest uppercase text-gray-600">
-              — VADO Vision Statement
-            </p>
-          </div>
-        </motion.div>
+          <p className="mt-8 text-sm tracking-widest uppercase text-[var(--color-text-secondary)]">
+            — VADO Vision Statement
+          </p>
+        </Reveal>
       </div>
     </section>
   );

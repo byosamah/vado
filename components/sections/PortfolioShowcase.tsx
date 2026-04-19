@@ -1,22 +1,10 @@
 "use client";
 
-/**
- * Portfolio Showcase Component
- * ============================
- * Split layout with interactive sidebar and Swiper carousel.
- *
- * Features:
- * - Left sidebar: "Our work" label + clickable project titles
- * - Right: Swiper carousel with portfolio images
- * - Clicking title navigates to that slide
- * - Clicking image opens project detail page
- */
-
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { fadeInLeft, fadeInRight, defaultViewport } from "@/lib/animations";
@@ -25,7 +13,6 @@ import { getAllProjects } from "@/lib/projects";
 import "swiper/css";
 import "swiper/css/effect-fade";
 
-// Get projects from centralized data
 const portfolioItems = getAllProjects().map((project, index) => ({
   id: index + 1,
   slug: project.slug,
@@ -37,19 +24,16 @@ const portfolioItems = getAllProjects().map((project, index) => ({
 export default function PortfolioShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
-  // Handle clicking on a title - navigate to that slide
   const handleTitleClick = (index: number) => {
-    if (swiperRef) {
-      swiperRef.slideToLoop(index);
-    }
+    swiperRef?.slideToLoop(index);
   };
 
   return (
-    <section id="portfolio" className="section bg-gray-50">
+    <section id="portfolio" className="section bg-[var(--color-surface)]">
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-          {/* Left Sidebar - Project Titles */}
           <motion.div
             className="lg:col-span-4"
             initial="hidden"
@@ -57,52 +41,46 @@ export default function PortfolioShowcase() {
             viewport={defaultViewport}
             variants={fadeInLeft}
           >
-            {/* Section Label */}
-            <div className="flex items-center gap-3 mb-12">
-              <span className="w-2 h-2 bg-black rounded-full" />
-              <span className="text-sm tracking-widest uppercase text-gray-600">
+            {/* Line indicator instead of the dot pattern used on other sections. */}
+            <div className="flex items-center gap-4 mb-12">
+              <span className="h-px w-10 bg-[var(--color-accent)]" aria-hidden="true" />
+              <h2 className="text-sm tracking-widest uppercase font-semibold text-[var(--color-text-secondary)]">
                 Our work
-              </span>
+              </h2>
             </div>
 
-            {/* Project Titles List */}
-            <div className="space-y-6">
-              {portfolioItems.map((item, index) => (
-                <div key={item.id}>
-                  <Link
-                    href={`/projects/${item.slug}`}
-                    onMouseEnter={() => handleTitleClick(index)}
-                    className={`
-                      block text-left w-full
-                      text-2xl md:text-3xl font-light
-                      transition-colors duration-300
-                      hover:text-black
-                      ${activeIndex === index ? "text-black" : "text-gray-400"}
-                    `}
-                  >
-                    {item.title}
-                  </Link>
-                </div>
-              ))}
-            </div>
-
-            {/* View All Link */}
-            <div className="mt-12">
-              <a
-                href="#"
-                className="
-                  text-sm tracking-widest uppercase
-                  underline-hover
-                  text-gray-600 hover:text-black
-                  transition-colors duration-300
-                "
-              >
-                View all projects
-              </a>
-            </div>
+            <ul className="space-y-6 list-none p-0 m-0" role="list">
+              {portfolioItems.map((item, index) => {
+                const isActive = activeIndex === index;
+                return (
+                  <li key={item.id}>
+                    <Link
+                      href={`/projects/${item.slug}`}
+                      onMouseEnter={() => handleTitleClick(index)}
+                      onFocus={() => handleTitleClick(index)}
+                      aria-current={isActive ? "true" : undefined}
+                      className={`group relative flex items-center gap-3 text-left w-full text-2xl md:text-3xl transition-colors duration-300 hover:text-[var(--color-text-primary)] ${
+                        isActive
+                          ? "font-normal text-[var(--color-text-primary)]"
+                          : "font-light text-[var(--color-text-muted)]"
+                      }`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`inline-block h-px transition-all duration-300 ${
+                          isActive
+                            ? "w-6 bg-[var(--color-accent)]"
+                            : "w-0 bg-transparent"
+                        }`}
+                      />
+                      {item.title}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </motion.div>
 
-          {/* Right - Image Carousel */}
           <motion.div
             className="lg:col-span-8"
             initial="hidden"
@@ -115,12 +93,17 @@ export default function PortfolioShowcase() {
               effect="fade"
               fadeEffect={{ crossFade: true }}
               loop={true}
-              autoplay={{
-                delay: 4000,
-                disableOnInteraction: false,
-              }}
+              autoplay={
+                prefersReducedMotion
+                  ? false
+                  : { delay: 5000, disableOnInteraction: false }
+              }
               onSwiper={setSwiperRef}
               onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+              a11y={{
+                prevSlideMessage: "Previous project",
+                nextSlideMessage: "Next project",
+              }}
               className="w-full aspect-[4/3]"
             >
               {portfolioItems.map((item, index) => (
@@ -137,9 +120,12 @@ export default function PortfolioShowcase() {
                       sizes="(max-width: 1024px) 100vw, 66vw"
                       priority={index === 0}
                     />
-                    {/* Category overlay */}
+                    <span
+                      className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--color-overlay-strong)] to-transparent pointer-events-none"
+                      aria-hidden="true"
+                    />
                     <div className="absolute bottom-6 left-6 z-10">
-                      <span className="text-sm tracking-widest uppercase text-white/80">
+                      <span className="text-sm tracking-widest uppercase text-white">
                         {item.category}
                       </span>
                     </div>

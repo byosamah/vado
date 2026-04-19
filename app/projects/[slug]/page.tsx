@@ -76,7 +76,7 @@ export default async function ProjectPage({
         <div className="container py-8">
           <Link
             href="/#portfolio"
-            className="inline-flex items-center gap-2 text-sm tracking-wide text-gray-600 hover:text-black transition-colors"
+            className="inline-flex items-center gap-2 text-sm tracking-wide text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Projects
@@ -101,7 +101,7 @@ export default async function ProjectPage({
             {/* Left Column — Title & Description */}
             <div className="lg:col-span-7">
               {/* Category Label */}
-              <span className="text-sm tracking-widest uppercase text-gray-500">
+              <span className="text-sm tracking-widest uppercase text-[var(--color-text-muted)]">
                 {project.category}
               </span>
 
@@ -111,33 +111,33 @@ export default async function ProjectPage({
               </h1>
 
               {/* Description */}
-              <p className="text-lg leading-relaxed text-gray-600">
+              <p className="text-lg leading-relaxed text-[var(--color-text-secondary)]">
                 {project.description}
               </p>
             </div>
 
             {/* Right Column — Project Details */}
             <div className="lg:col-span-5">
-              <div className="lg:pl-8 lg:border-l border-gray-200">
-                <h3 className="text-sm tracking-widest uppercase text-gray-500 mb-6">
+              <div className="lg:pl-8 lg:border-l border-[var(--color-border)]">
+                <h3 className="text-sm tracking-widest uppercase text-[var(--color-text-muted)] mb-6">
                   Project Details
                 </h3>
 
                 <dl className="space-y-4">
                   <div>
-                    <dt className="text-sm text-gray-500">Client</dt>
+                    <dt className="text-sm text-[var(--color-text-muted)]">Client</dt>
                     <dd className="text-base mt-1">{project.client}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm text-gray-500">Location</dt>
+                    <dt className="text-sm text-[var(--color-text-muted)]">Location</dt>
                     <dd className="text-base mt-1">{project.location}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm text-gray-500">Year</dt>
+                    <dt className="text-sm text-[var(--color-text-muted)]">Year</dt>
                     <dd className="text-base mt-1">{project.year}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm text-gray-500">Type</dt>
+                    <dt className="text-sm text-[var(--color-text-muted)]">Type</dt>
                     <dd className="text-base mt-1">{project.category}</dd>
                   </div>
                 </dl>
@@ -166,18 +166,18 @@ export default async function ProjectPage({
         )}
 
         {/* Project Navigation */}
-        <div className="border-t border-gray-200">
+        <div className="border-t border-[var(--color-border)]">
           <div className="container">
             <div className="flex items-center justify-between py-8">
               {/* Previous */}
               {previous ? (
                 <Link
                   href={`/projects/${previous.slug}`}
-                  className="group flex items-center gap-3 text-gray-600 hover:text-black transition-colors"
+                  className="group flex items-center gap-3 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <div>
-                    <span className="text-xs tracking-widest uppercase text-gray-400 block">
+                    <span className="text-xs tracking-widest uppercase text-[var(--color-text-muted)] block">
                       Previous
                     </span>
                     <span className="text-sm">{previous.title}</span>
@@ -191,10 +191,10 @@ export default async function ProjectPage({
               {next ? (
                 <Link
                   href={`/projects/${next.slug}`}
-                  className="group flex items-center gap-3 text-right text-gray-600 hover:text-black transition-colors"
+                  className="group flex items-center gap-3 text-right text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
                 >
                   <div>
-                    <span className="text-xs tracking-widest uppercase text-gray-400 block">
+                    <span className="text-xs tracking-widest uppercase text-[var(--color-text-muted)] block">
                       Next
                     </span>
                     <span className="text-sm">{next.title}</span>

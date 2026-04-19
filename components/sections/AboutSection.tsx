@@ -1,92 +1,57 @@
-"use client";
-
-/**
- * About Section Component
- * =======================
- * Two-column layout with text content on left, image on right.
- *
- * Layout:
- * - Left: Subtitle with dot, H2 headline, description, button
- * - Right: Large image with scroll-triggered fade-in
- */
-
-import { motion } from "framer-motion";
-import { fadeInUp, fadeInRight, defaultViewport } from "@/lib/animations";
+import Image from "next/image";
 import Link from "next/link";
+import { Reveal, RevealItem } from "@/components/Reveal";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="section bg-white">
+    <section id="about" className="section bg-background">
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left Column - Text Content */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={defaultViewport}
-            className="space-y-8"
-          >
-            {/* Subtitle with dot indicator */}
-            <motion.div variants={fadeInUp} className="flex items-center gap-3">
-              {/* Dot indicator - matches original design */}
-              <span className="w-2 h-2 bg-black rounded-full" />
-              <span className="text-sm tracking-widest uppercase text-gray-600">
+          <Reveal variant="stagger" className="space-y-8">
+            <RevealItem className="flex items-center gap-3">
+              <span className="w-2 h-2 bg-[var(--color-accent)] rounded-full" aria-hidden="true" />
+              <span className="text-sm tracking-widest uppercase text-[var(--color-text-secondary)]">
                 About VADO
               </span>
-            </motion.div>
+            </RevealItem>
 
-            {/* Main Headline */}
-            <motion.h2 variants={fadeInUp}>
-              Where Vision
-              <br />
-              Becomes
-              <br />
-              Architecture.
-            </motion.h2>
+            <RevealItem>
+              <h2>Where vision becomes architecture.</h2>
+            </RevealItem>
 
-            {/* Description Paragraph */}
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-relaxed max-w-md"
-            >
-              VADO (VISION Arch. & Engineering Consultants) is a multidisciplinary
-              consultancy specialized in architecture, engineering, and project
-              development. With decades of experience, VADO delivers innovative,
-              functional, and sustainable solutions tailored to meet the evolving
-              needs of communities and clients across Saudi Arabia.
-            </motion.p>
+            <RevealItem>
+              <p className="text-lg leading-relaxed max-w-md text-[var(--color-text-secondary)]">
+                VADO (VISION Arch. &amp; Engineering Consultants) is a
+                multidisciplinary consultancy specialised in architecture,
+                engineering, and project development. With decades of
+                experience, VADO delivers innovative, functional, and
+                sustainable solutions tailored to the evolving needs of
+                communities and clients across Saudi Arabia.
+              </p>
+            </RevealItem>
 
-            {/* CTA Button */}
-            <motion.div variants={fadeInUp}>
+            <RevealItem>
               <Link
                 href="#services"
-                className="
-                  inline-block
-                  text-sm tracking-widest uppercase
-                  border-b border-black pb-1
-                  hover:text-gray-600 hover:border-gray-600
-                  transition-colors duration-300
-                "
+                className="inline-flex items-center min-h-[var(--touch-target)] text-sm tracking-widest uppercase border-b border-[var(--color-accent)] pb-1 hover:opacity-70 transition-opacity duration-300"
               >
                 View Services
               </Link>
-            </motion.div>
-          </motion.div>
+            </RevealItem>
+          </Reveal>
 
-          {/* Right Column - Image */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={defaultViewport}
-            variants={fadeInRight}
-            className="image-hover-scale"
+          <Reveal
+            variant="fadeInRight"
+            className="image-hover-scale relative w-full aspect-[4/5]"
           >
-            <img
-              src="/images/about.png"
-              alt="Modern architecture interior"
-              className="w-full h-auto object-cover"
+            <Image
+              src="/images/about.webp"
+              alt="VADO studio interior"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
             />
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

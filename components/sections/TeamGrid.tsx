@@ -1,17 +1,5 @@
-"use client";
-
-/**
- * Team Grid Component
- * ===================
- * Four-column grid showcasing team members.
- *
- * Features:
- * - Hover effect: image scales 1.05 with overflow hidden
- * - Name and role displayed below each image
- */
-
-import { motion } from "framer-motion";
-import { fadeInUp, staggerContainer, defaultViewport } from "@/lib/animations";
+import Image from "next/image";
+import { Reveal, RevealItem } from "@/components/Reveal";
 
 const teamMembers = [
   {
@@ -30,58 +18,37 @@ const teamMembers = [
 
 export default function TeamGrid() {
   return (
-    <section id="team" className="section bg-white">
+    <section id="team" className="section bg-background">
       <div className="container">
-        {/* Section Header */}
-        <motion.div
-          className="mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={defaultViewport}
-          variants={fadeInUp}
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-2 h-2 bg-black rounded-full" />
-            <span className="text-sm tracking-widest uppercase text-gray-600">
-              Leadership
-            </span>
-          </div>
-          <h2>Meet our people</h2>
-        </motion.div>
+        {/* Intro varies from the dot-prefix pattern used elsewhere —
+            numbered index keeps typographic rhythm without repetition. */}
+        <Reveal className="mb-16 flex items-baseline gap-6 flex-wrap">
+          <span className="text-sm font-mono text-[var(--color-text-muted)] tracking-widest">
+            02 ·
+          </span>
+          <h2>The founders</h2>
+        </Reveal>
 
-        {/* Team Grid */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={defaultViewport}
+        <Reveal
+          variant="stagger"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto list-none p-0"
         >
           {teamMembers.map((member) => (
-            <motion.div
-              key={member.id}
-              variants={fadeInUp}
-              className="group"
-            >
-              {/* Image Container with hover scale */}
-              <div className="overflow-hidden mb-6">
-                <img
+            <RevealItem key={member.id} className="group">
+              <div className="relative w-full aspect-[3/4] overflow-hidden mb-6">
+                <Image
                   src={member.image}
-                  alt={member.name}
-                  className="
-                    w-full aspect-[3/4] object-cover
-                    transition-transform duration-500 ease-out
-                    group-hover:scale-105
-                  "
+                  alt={`Portrait of ${member.name}`}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 320px"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
               </div>
-
-              {/* Name & Role */}
-              <h4 className="text-xl font-light mb-1">{member.name}</h4>
-              <p className="text-sm text-gray-600">{member.role}</p>
-            </motion.div>
+              <h3 className="text-xl font-normal mb-1">{member.name}</h3>
+              <p className="text-sm text-[var(--color-text-secondary)]">{member.role}</p>
+            </RevealItem>
           ))}
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );
