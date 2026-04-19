@@ -30,8 +30,8 @@ export const projects: Project[] = [
     heroImage: "/images/portfolio-almashraq.jpg",
     gallery: [
       "/images/portfolio-almashraq.jpg",
-      "/images/portfolio-1.webp",
-      "/images/portfolio-2.webp",
+      "/images/portfolio-1.png",
+      "/images/portfolio-2.png",
     ],
   },
   {
@@ -43,11 +43,11 @@ export const projects: Project[] = [
     year: "2022",
     description:
       "An interior design project that transforms a modern villa into a serene living space. The design philosophy centered on creating harmony between minimalist aesthetics and warm, inviting atmospheres. Natural materials, carefully curated lighting, and a neutral palette work together to establish spaces that feel both luxurious and comfortable.",
-    heroImage: "/images/portfolio-1.webp",
+    heroImage: "/images/portfolio-1.png",
     gallery: [
-      "/images/portfolio-1.webp",
+      "/images/portfolio-1.png",
       "/images/portfolio-almashraq.jpg",
-      "/images/portfolio-2.webp",
+      "/images/portfolio-2.png",
     ],
   },
   {
@@ -59,10 +59,10 @@ export const projects: Project[] = [
     year: "2021",
     description:
       "A cultural space designed to house and celebrate contemporary art. The exterior architecture makes a bold statement while respecting its urban context. Clean lines and thoughtful massing create dramatic interplay of light and shadow throughout the day. The building serves as both a container for art and a work of art itself.",
-    heroImage: "/images/portfolio-2.webp",
+    heroImage: "/images/portfolio-2.png",
     gallery: [
-      "/images/portfolio-2.webp",
-      "/images/portfolio-1.webp",
+      "/images/portfolio-2.png",
+      "/images/portfolio-1.png",
       "/images/portfolio-almashraq.jpg",
     ],
   },

@@ -1,15 +1,19 @@
 "use client";
 
 /**
- * Testimonials Slider
- * Quotes attributed to the project clients shown in PortfolioShowcase.
- * Replace attributions with verified client statements before production.
+ * Testimonials Slider Component
+ * =============================
+ * Carousel of client testimonials using Swiper.
+ *
+ * Features:
+ * - Auto-play with 4 second intervals
+ * - Loop enabled
+ * - Quote + Author name + Role
  */
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { motion } from "framer-motion";
-import { useReducedMotion } from "framer-motion";
 import { fadeInUp, defaultViewport } from "@/lib/animations";
 
 import "swiper/css";
@@ -19,31 +23,29 @@ const testimonials = [
   {
     id: 1,
     quote:
-      "VADO’s architectural judgment stayed steady from concept through handover. Al Mashraq feels like it belonged here before we broke ground.",
-    author: "Al Mashraq Development Co.",
-    role: "Al Khobar — Commercial",
+      "Working with Hiroshi was a transformative experience. They understood our vision and translated it into a stunning architectural reality that exceeded all our expectations.",
+    author: "John Mitchell",
+    role: "Homeowner",
   },
   {
     id: 2,
     quote:
-      "We asked for a home that felt calm rather than performative. Every detail of Villa Yun honors that brief.",
-    author: "Private Commission",
-    role: "Dhahran — Residential",
+      "The attention to detail and commitment to sustainability made Hiroshi the perfect partner for our urban development project. The results speak for themselves.",
+    author: "Sarah Chen",
+    role: "Property Developer",
   },
   {
     id: 3,
     quote:
-      "A gallery that is itself a gallery piece is a difficult ask. VADO carried the architectural language, the engineering, and the neighborhood conversations to a finished building that speaks for itself.",
-    author: "Nomus Cultural Foundation",
-    role: "Dammam — Cultural",
+      "From concept to completion, the team delivered exceptional work. Their innovative approach to interior design created spaces that truly inspire.",
+    author: "Michael Torres",
+    role: "CEO, Torres Industries",
   },
 ];
 
 export default function TestimonialsSlider() {
-  const prefersReducedMotion = useReducedMotion();
-
   return (
-    <section className="section bg-[var(--color-surface-inverse)] dark-surface">
+    <section className="section bg-gray-900">
       <div className="container">
         <motion.div
           className="max-w-4xl mx-auto"
@@ -52,57 +54,60 @@ export default function TestimonialsSlider() {
           viewport={defaultViewport}
           variants={fadeInUp}
         >
+          {/* Section Label */}
           <div className="flex items-center justify-center gap-3 mb-12">
-            <span className="w-2 h-2 bg-[var(--color-on-dark)] rounded-full" aria-hidden="true" />
-            <span className="text-sm tracking-widest uppercase text-[var(--color-on-dark-subtle)]">
+            <span className="w-2 h-2 bg-white rounded-full" />
+            <span className="text-sm tracking-widest uppercase text-white/60">
               Testimonials
             </span>
           </div>
 
+          {/* Testimonials Swiper */}
           <Swiper
             modules={[Autoplay, Pagination]}
             loop={true}
-            autoplay={
-              prefersReducedMotion
-                ? false
-                : { delay: 6000, disableOnInteraction: false }
-            }
-            pagination={{ clickable: true }}
-            a11y={{
-              prevSlideMessage: "Previous testimonial",
-              nextSlideMessage: "Next testimonial",
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+            }}
+            pagination={{
+              clickable: true,
             }}
             className="testimonials-swiper"
           >
             {testimonials.map((testimonial) => (
               <SwiperSlide key={testimonial.id}>
-                <figure className="text-center px-4">
-                  <blockquote className="text-xl md:text-2xl lg:text-3xl font-light leading-relaxed text-[var(--color-on-dark)] mb-8">
-                    &ldquo;{testimonial.quote}&rdquo;
+                <div className="text-center px-4">
+                  {/* Quote */}
+                  <blockquote className="text-xl md:text-2xl lg:text-3xl font-light leading-relaxed text-white mb-8">
+                    "{testimonial.quote}"
                   </blockquote>
-                  <figcaption>
-                    <p className="text-lg text-[var(--color-on-dark)] font-normal">
-                      {testimonial.author}
-                    </p>
-                    <p className="text-sm text-[var(--color-on-dark-subtle)]">{testimonial.role}</p>
-                  </figcaption>
-                </figure>
+
+                  {/* Author */}
+                  <p className="text-lg text-white font-light">
+                    {testimonial.author}
+                  </p>
+                  <p className="text-sm text-white/60">
+                    {testimonial.role}
+                  </p>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
         </motion.div>
       </div>
 
+      {/* Custom styles for dark background pagination */}
       <style jsx global>{`
         .testimonials-swiper .swiper-pagination {
           margin-top: 40px;
           position: relative;
         }
         .testimonials-swiper .swiper-pagination-bullet {
-          background: var(--color-on-dark-subtle);
+          background: rgba(255, 255, 255, 0.3);
         }
         .testimonials-swiper .swiper-pagination-bullet-active {
-          background: var(--color-on-dark);
+          background: white;
         }
       `}</style>
     </section>
