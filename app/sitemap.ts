@@ -21,6 +21,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })
   );
 
+  const staticRoutes: MetadataRoute.Sitemap = [
+    "/about",
+    "/services",
+    "/projects",
+  ].map((path) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified,
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
   return [
     {
       url: SITE_URL,
@@ -28,6 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    ...staticRoutes,
     ...projectRoutes,
   ];
 }

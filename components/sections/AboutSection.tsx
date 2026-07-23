@@ -67,7 +67,7 @@ export default function AboutSection() {
           <div data-img-reveal className="image-hover-scale">
             <Image
               src="/images/projects/courtyard-villa/gallery-03.webp"
-              alt="Courtyard Villa — arched loggia in warm evening light"
+              alt="Courtyard Villa by VADO, an arched loggia in warm evening light"
               width={1800}
               height={1007}
               sizes="(max-width: 1024px) 100vw, 50vw"

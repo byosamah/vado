@@ -37,9 +37,18 @@ export const OG_IMAGE = {
   alt: "Al Hamra Waterfront masterplan by VADO on the Arabian Gulf",
 } as const;
 
-/** One-line description reused across metadata and structured data. */
+/**
+ * Long description for structured data / llms.txt (depth is fine there).
+ */
 export const SITE_DESCRIPTION =
   "VADO (VISION Arch. & Engineering Consultants) is a multidisciplinary architecture and engineering consultancy in Al Khobar, Saudi Arabia. Established in 1994, VADO delivers architectural design, engineering, project management, and site supervision for urban, landscape, cultural, retail, hospitality, and residential projects across the Kingdom.";
+
+/**
+ * Short meta description for the SERP snippet (~155 chars, so Google does not
+ * truncate it). Keep the long SITE_DESCRIPTION for JSON-LD and llms.txt.
+ */
+export const META_DESCRIPTION =
+  "Architecture and engineering consultancy in Al Khobar, Saudi Arabia. Since 1994, VADO delivers design, engineering, and project management across the Kingdom.";
 
 /** Core services, mirrored from the ServicesTabs section (kept truthful). */
 export const SERVICES = [

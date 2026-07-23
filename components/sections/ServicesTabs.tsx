@@ -25,6 +25,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useReveals } from "@/lib/gsap/reveals";
 import { gsap, useGSAP, EASE, DUR, prefersReducedMotion } from "@/lib/gsap/gsap";
 
@@ -158,13 +159,13 @@ export default function ServicesTabs() {
                       <p className="text-base leading-relaxed text-gray-600 mb-6">
                         {service.description}
                       </p>
-                      <a
-                        href="#"
+                      <Link
+                        href={`/services#${service.id}`}
                         onClick={(e) => e.stopPropagation()}
                         className="text-sm tracking-wide underline text-gray-800 hover:text-black transition-colors"
                       >
                         read more
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 )}
@@ -216,12 +217,12 @@ export default function ServicesTabs() {
                     <p className="text-base leading-relaxed text-gray-600">
                       {service.description}
                     </p>
-                    <a
-                      href="#"
+                    <Link
+                      href={`/services#${service.id}`}
                       className="inline-block text-sm tracking-wide underline text-gray-800"
                     >
                       read more
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

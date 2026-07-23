@@ -52,6 +52,13 @@ export default function Home() {
       <Header />
 
       <main>
+        {/* Primary page heading for SEO. Visually hidden (the hero is an image
+            slider with cycling h2 titles), but present as the single semantic H1
+            carrying the primary keyword. */}
+        <h1 className="sr-only">
+          VADO: Architecture and Engineering Consultants in Al Khobar, Saudi Arabia
+        </h1>
+
         {/* Hero - Fullscreen slider with fade effect */}
         <HeroSlider />
 

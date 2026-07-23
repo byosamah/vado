@@ -5,7 +5,7 @@ import SmoothScroll from "@/components/providers/SmoothScroll";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import JsonLd from "@/components/seo/JsonLd";
 import { siteGraph } from "@/lib/schema";
-import { SITE_URL, SITE_DESCRIPTION, OG_IMAGE } from "@/lib/site";
+import { SITE_URL, META_DESCRIPTION, OG_IMAGE } from "@/lib/site";
 
 // Runs before the body paints: arms the FOUC guard so reveal targets start
 // hidden — but only when JS is on and the visitor allows motion.
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     default: "VADO | Architecture & Engineering Consultants in Al Khobar",
     template: "%s | VADO",
   },
-  description: SITE_DESCRIPTION,
+  description: META_DESCRIPTION,
   applicationName: "VADO",
   keywords: [
     "VADO",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "VADO",
     title: "VADO | Architecture & Engineering Consultants in Al Khobar",
-    description: SITE_DESCRIPTION,
+    description: META_DESCRIPTION,
     url: SITE_URL,
     locale: "en_US",
     images: [
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "VADO | Architecture & Engineering Consultants in Al Khobar",
-    description: SITE_DESCRIPTION,
+    description: META_DESCRIPTION,
     images: [OG_IMAGE.url],
   },
   robots: {

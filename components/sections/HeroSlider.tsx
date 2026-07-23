@@ -215,7 +215,7 @@ export default function HeroSlider() {
               {/* Background Image - Optimized with Next.js Image */}
               <Image
                 src={slide.image}
-                alt={slide.title}
+                alt={`${slide.title}, ${slide.category} project by VADO`}
                 fill
                 className="object-cover"
                 priority={index === 0}

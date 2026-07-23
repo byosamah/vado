@@ -113,7 +113,7 @@ export default async function ProjectPage({
         <div className="relative w-full h-[60vh]">
           <Image
             src={project.heroImage}
-            alt={project.title}
+            alt={`${project.title}, ${project.type} by VADO in ${project.location}`}
             fill
             className="object-cover"
             priority
@@ -176,7 +176,7 @@ export default async function ProjectPage({
                 <div key={index} className="relative aspect-[4/3] overflow-hidden">
                   <Image
                     src={image}
-                    alt={`${project.title} - Image ${index + 2}`}
+                    alt={`${project.title} by VADO, ${project.category}, image ${index + 2}`}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

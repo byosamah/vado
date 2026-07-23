@@ -61,7 +61,7 @@ export default function TeamGrid() {
               <div className="relative overflow-hidden mb-6 aspect-[3/4]" data-img-reveal>
                 <Image
                   src={member.image}
-                  alt={member.name}
+                  alt={`${member.name}, ${member.role} at VADO`}
                   fill
                   sizes="(max-width: 640px) 100vw, 320px"
                   className="

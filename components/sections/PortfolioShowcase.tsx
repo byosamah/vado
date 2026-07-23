@@ -98,8 +98,8 @@ export default function PortfolioShowcase() {
 
             {/* View All Link */}
             <div className="mt-12">
-              <a
-                href="#"
+              <Link
+                href="/projects"
                 data-reveal
                 className="
                   text-sm tracking-widest uppercase
@@ -109,7 +109,7 @@ export default function PortfolioShowcase() {
                 "
               >
                 View all projects
-              </a>
+              </Link>
             </div>
           </div>
 

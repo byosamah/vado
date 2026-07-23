@@ -88,21 +88,21 @@ export default function Footer() {
             </h4>
             <div className="space-y-2">
               <Link
-                href="#portfolio"
+                href="/projects"
                 className="block py-2 -my-1 hover:opacity-100 transition-opacity"
                 style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 Projects
               </Link>
               <Link
-                href="#about"
+                href="/about"
                 className="block py-2 -my-1 hover:opacity-100 transition-opacity"
                 style={{ color: "rgba(255,255,255,0.6)" }}
               >
                 About
               </Link>
               <Link
-                href="#services"
+                href="/services"
                 className="block py-2 -my-1 hover:opacity-100 transition-opacity"
                 style={{ color: "rgba(255,255,255,0.6)" }}
               >
