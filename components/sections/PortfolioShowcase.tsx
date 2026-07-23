@@ -129,7 +129,7 @@ export default function PortfolioShowcase() {
               onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
               className="w-full aspect-[4/3]"
             >
-              {portfolioItems.map((item, index) => (
+              {portfolioItems.map((item) => (
                 <SwiperSlide key={item.id}>
                   <Link
                     href={`/projects/${item.slug}`}
@@ -141,7 +141,7 @@ export default function PortfolioShowcase() {
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 1024px) 100vw, 66vw"
-                      priority={index === 0}
+                      loading="lazy"
                     />
                     {/* Category overlay */}
                     <div className="absolute bottom-6 left-6 z-10">

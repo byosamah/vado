@@ -17,6 +17,7 @@
  */
 
 import { useRef } from "react";
+import Image from "next/image";
 import { useReveals } from "@/lib/gsap/reveals";
 
 const teamMembers = [
@@ -57,12 +58,14 @@ export default function TeamGrid() {
           {teamMembers.map((member) => (
             <div key={member.id} className="group" data-reveal>
               {/* Image Container with hover scale */}
-              <div className="overflow-hidden mb-6" data-img-reveal>
-                <img
+              <div className="relative overflow-hidden mb-6 aspect-[3/4]" data-img-reveal>
+                <Image
                   src={member.image}
                   alt={member.name}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 320px"
                   className="
-                    w-full aspect-[3/4] object-cover
+                    object-cover
                     grayscale group-hover:grayscale-0
                     transition-all duration-500 ease-out
                     group-hover:scale-105
