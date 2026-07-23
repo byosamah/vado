@@ -12,9 +12,10 @@
  * - Clicking image opens project detail page
  *
  * Animation (GSAP via useReveals on the section root):
- * - Left sidebar "Our work" label, each project title Link, and the
- *   "View all projects" link carry data-reveal and rise/fade in on scroll,
- *   with the title Links auto-staggering as a group.
+ * - Left sidebar "Our work" label and each project title Link carry data-reveal
+ *   and rise/fade in on scroll, with the title Links auto-staggering as a group.
+ *   (The "View all projects" link is currently commented out: few projects for
+ *   now. The /projects index it pointed to still exists and is linked in the footer.)
  * - The right carousel column uses data-reveal="scale" to scale-fade in.
  * - Reduced-motion is honoured by the reveal system: content stays fully
  *   visible. Swiper (fade effect, loop/rewind, autoplay) and all
@@ -96,7 +97,10 @@ export default function PortfolioShowcase() {
               ))}
             </div>
 
-            {/* View All Link */}
+            {/* View All Link - TEMPORARILY HIDDEN: only a few projects for now,
+                so a "view all" link is redundant (the sidebar already lists them
+                all). The /projects index page still exists and is linked from the
+                footer. Uncomment to restore when there are more projects.
             <div className="mt-12">
               <Link
                 href="/projects"
@@ -111,6 +115,7 @@ export default function PortfolioShowcase() {
                 View all projects
               </Link>
             </div>
+            */}
           </div>
 
           {/* Right - Image Carousel */}
