@@ -133,12 +133,8 @@ export default async function ProjectPage({
                     <dd className="text-base mt-1">{project.location}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm text-gray-500">Year</dt>
-                    <dd className="text-base mt-1">{project.year}</dd>
-                  </div>
-                  <div>
                     <dt className="text-sm text-gray-500">Type</dt>
-                    <dd className="text-base mt-1">{project.category}</dd>
+                    <dd className="text-base mt-1">{project.type}</dd>
                   </div>
                 </dl>
               </div>

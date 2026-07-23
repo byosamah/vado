@@ -10,16 +10,24 @@
  * - Right: Swiper carousel with portfolio images
  * - Clicking title navigates to that slide
  * - Clicking image opens project detail page
+ *
+ * Animation (GSAP via useReveals on the section root):
+ * - Left sidebar "Our work" label, each project title Link, and the
+ *   "View all projects" link carry data-reveal and rise/fade in on scroll,
+ *   with the title Links auto-staggering as a group.
+ * - The right carousel column uses data-reveal="scale" to scale-fade in.
+ * - Reduced-motion is honoured by the reveal system: content stays fully
+ *   visible. Swiper (fade effect, loop/rewind, autoplay) and all
+ *   interactivity are untouched by the animation layer.
  */
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { fadeInLeft, fadeInRight, defaultViewport } from "@/lib/animations";
+import { useReveals } from "@/lib/gsap/reveals";
 import { getAllProjects } from "@/lib/projects";
 
 import "swiper/css";
@@ -34,7 +42,14 @@ const portfolioItems = getAllProjects().map((project, index) => ({
   image: project.heroImage,
 }));
 
+// Swiper's loop mode needs more than two slides to duplicate cleanly.
+// Below that, rewind gives the same endless feel without the blank frames.
+const useLoop = portfolioItems.length > 2;
+
 export default function PortfolioShowcase() {
+  const root = useRef<HTMLElement>(null);
+  useReveals(root);
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
 
@@ -46,19 +61,13 @@ export default function PortfolioShowcase() {
   };
 
   return (
-    <section id="portfolio" className="section bg-gray-50">
+    <section ref={root} id="portfolio" className="section bg-gray-50">
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
           {/* Left Sidebar - Project Titles */}
-          <motion.div
-            className="lg:col-span-4"
-            initial="hidden"
-            whileInView="visible"
-            viewport={defaultViewport}
-            variants={fadeInLeft}
-          >
+          <div className="lg:col-span-4">
             {/* Section Label */}
-            <div className="flex items-center gap-3 mb-12">
+            <div data-reveal className="flex items-center gap-3 mb-12">
               <span className="w-2 h-2 bg-black rounded-full" />
               <span className="text-sm tracking-widest uppercase text-gray-600">
                 Our work
@@ -72,6 +81,7 @@ export default function PortfolioShowcase() {
                   <Link
                     href={`/projects/${item.slug}`}
                     onMouseEnter={() => handleTitleClick(index)}
+                    data-reveal
                     className={`
                       block text-left w-full
                       text-2xl md:text-3xl font-light
@@ -90,6 +100,7 @@ export default function PortfolioShowcase() {
             <div className="mt-12">
               <a
                 href="#"
+                data-reveal
                 className="
                   text-sm tracking-widest uppercase
                   underline-hover
@@ -100,21 +111,16 @@ export default function PortfolioShowcase() {
                 View all projects
               </a>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right - Image Carousel */}
-          <motion.div
-            className="lg:col-span-8"
-            initial="hidden"
-            whileInView="visible"
-            viewport={defaultViewport}
-            variants={fadeInRight}
-          >
+          <div data-reveal="scale" className="lg:col-span-8">
             <Swiper
               modules={[Autoplay, EffectFade]}
               effect="fade"
               fadeEffect={{ crossFade: true }}
-              loop={true}
+              loop={useLoop}
+              rewind={!useLoop}
               autoplay={{
                 delay: 4000,
                 disableOnInteraction: false,
@@ -147,7 +153,7 @@ export default function PortfolioShowcase() {
                 </SwiperSlide>
               ))}
             </Swiper>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

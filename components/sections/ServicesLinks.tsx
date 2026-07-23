@@ -5,13 +5,18 @@
  * ========================
  * Three-column row of text links with underline hover effect.
  *
- * Each link has:
- * - Underline that expands left-to-right on hover
- * - Subtle color transition
+ * Animation (GSAP):
+ * - Root <section> ref is wired to useReveals, which scans for reveal tags.
+ * - Each of the three link items is tagged data-reveal, so they fade + rise
+ *   in on scroll and auto-stagger together as sibling reveals.
+ * - The underline-hover class still drives the left-to-right underline and
+ *   colour transition on hover.
+ * - Respects prefers-reduced-motion via the shared reveal system (content
+ *   stays fully visible when motion is disabled).
  */
 
-import { motion } from "framer-motion";
-import { fadeInUp, staggerContainer, defaultViewport } from "@/lib/animations";
+import { useRef } from "react";
+import { useReveals } from "@/lib/gsap/reveals";
 import Link from "next/link";
 
 const links = [
@@ -33,18 +38,15 @@ const links = [
 ];
 
 export default function ServicesLinks() {
+  const root = useRef<HTMLElement>(null);
+  useReveals(root);
+
   return (
-    <section className="py-16 md:py-24 bg-white border-t border-gray-100">
+    <section ref={root} className="py-16 md:py-24 bg-white border-t border-gray-100">
       <div className="container">
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={defaultViewport}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {links.map((link) => (
-            <motion.div key={link.id} variants={fadeInUp}>
+            <div key={link.id} data-reveal>
               <Link
                 href={link.href}
                 className="
@@ -56,9 +58,9 @@ export default function ServicesLinks() {
               >
                 {link.text}
               </Link>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

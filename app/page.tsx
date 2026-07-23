@@ -13,7 +13,7 @@
  * 6. Services Tabs
  * 7. Quote Block
  * 8. Team Grid
- * 9. Testimonials Slider
+ * 9. Guiding Principles
  * 10. Blog Grid
  * 11. Contact Section (NEW)
  * 12. CTA Banner
@@ -33,7 +33,7 @@ import PortfolioShowcase from "@/components/sections/PortfolioShowcase";
 import ServicesTabs from "@/components/sections/ServicesTabs";
 import QuoteBlock from "@/components/sections/QuoteBlock";
 import TeamGrid from "@/components/sections/TeamGrid";
-import TestimonialsSlider from "@/components/sections/TestimonialsSlider";
+import GuidingPrinciples from "@/components/sections/GuidingPrinciples";
 // import BlogGrid from "@/components/sections/BlogGrid"; // TEMPORARILY HIDDEN
 import ContactSection from "@/components/sections/ContactSection";
 import CTABanner from "@/components/sections/CTABanner";
@@ -71,8 +71,8 @@ export default function Home() {
         {/* Team - Four column grid of team members */}
         <TeamGrid />
 
-        {/* Testimonials - Dark background slider */}
-        <TestimonialsSlider />
+        {/* Guiding Principles - Dark background values band */}
+        <GuidingPrinciples />
 
         {/* Blog - Four column grid of blog posts */}
         {/* TEMPORARILY HIDDEN - Uncomment to restore:

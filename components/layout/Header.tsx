@@ -18,8 +18,8 @@ import { Menu, X } from "lucide-react";
 
 // Navigation items for VADO site
 const navItems = [
-  { label: "Projects", href: "#portfolio" },
   { label: "About", href: "#about" },
+  { label: "Projects", href: "#portfolio" },
   { label: "Services", href: "#services" },
   { label: "Team", href: "#team" },
   { label: "Contact", href: "#contact" },
@@ -104,7 +104,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`
-              md:hidden p-2
+              md:hidden flex items-center justify-center min-w-11 min-h-11 -mr-1
               transition-colors duration-300
               ${isMobileMenuOpen || (!forceSolid && !isScrolled) ? "text-white" : "text-black"}
             `}
@@ -132,13 +132,13 @@ export default function Header({ forceSolid = false }: HeaderProps) {
           }
         `}
       >
-        <nav className="flex flex-col items-center gap-6 pt-12">
+        <nav className="flex flex-col items-center gap-2 pt-8">
           {navItems.map((item) => (
             <Link
               key={item.label}
               href={item.href}
               onClick={handleNavClick}
-              className="text-lg tracking-wide uppercase text-white hover:text-white/80"
+              className="block w-full text-center py-3 px-8 text-lg tracking-wide uppercase text-white hover:text-white/80"
             >
               {item.label}
             </Link>

@@ -3,21 +3,35 @@
 /**
  * Hero Slider Component
  * =====================
- * Full-screen hero slider using Swiper.js with fade effect.
+ * Full-screen hero slider using Swiper.js with fade effect, choreographed with GSAP.
  *
- * Features:
- * - Fullscreen background images (100vh)
- * - Fade transition between slides
- * - Auto-play with 5 second intervals
- * - Bottom-left positioned title and category
- * - Gradient overlay for text readability
+ * Motion (GSAP, bespoke via useGSAP scoped to the <section> root):
+ * - Intro-on-load timeline (once): the top-left tagline reveals, then the ACTIVE
+ *   slide's category (fade + y), then its title as a SplitText masked LINE reveal.
+ *   All intro targets live inside ".swiper-slide-active".
+ * - Slide change (onSlideChangeTransitionStart): the NEW active slide's category +
+ *   title re-animate as whole BLOCKS (fade + y). SplitText is NOT re-run per change,
+ *   keeping the handler robust. Wired through a contextSafe callback.
+ * - Ken Burns: the active slide's <Image> drifts scale 1.08 → 1 over ~6s (ease none),
+ *   retriggered for the new active image on every slide change.
+ * - Scroll hand-off: a scrubbed ScrollTrigger drifts the slide content up + fades it
+ *   out as the hero leaves the viewport (yPercent + autoAlpha, top top → bottom top).
+ * - prefers-reduced-motion: all GSAP is skipped and every element stays fully visible;
+ *   Swiper still autoplays. Gradient overlay + pagination markup are always present.
  */
 
+import { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
-import { motion } from "framer-motion";
 import Image from "next/image";
-import { fadeInUp, staggerContainer } from "@/lib/animations";
+import {
+  useGSAP,
+  gsap,
+  SplitText,
+  EASE,
+  DUR,
+  prefersReducedMotion,
+} from "@/lib/gsap/gsap";
 
 // Import Swiper styles
 import "swiper/css";
@@ -28,37 +42,150 @@ import "swiper/css/pagination";
 const slides = [
   {
     id: 1,
-    image: "/images/hero-1.png",
-    title: "Modern Villa Design",
-    category: "Residential",
+    image: "/images/projects/al-hamra-waterfront/gallery-01.webp",
+    title: "Al Hamra Waterfront",
+    category: "Master Plan",
   },
   {
     id: 2,
-    image: "/images/hero-2.png",
-    title: "Sculptural Excellence",
-    category: "Art & Design",
+    image: "/images/projects/matal/gallery-07.webp",
+    title: "Matal",
+    category: "Waterfront",
   },
   {
     id: 3,
-    image: "/images/hero-3.png",
-    title: "Sunset Serenity",
-    category: "Sculpture",
+    image: "/images/projects/courtyard-villa/gallery-01.webp",
+    title: "Courtyard Villa",
+    category: "Residential",
   },
   {
     id: 4,
-    image: "/images/hero-4.png",
-    title: "Contemporary Living",
-    category: "Architecture",
+    image: "/images/projects/tholal/gallery-08.webp",
+    title: "Tholal",
+    category: "Commercial",
   },
 ];
 
 export default function HeroSlider() {
+  const root = useRef<HTMLElement>(null);
+
+  const { contextSafe } = useGSAP(
+    () => {
+      if (prefersReducedMotion()) return;
+      const rootEl = root.current;
+      if (!rootEl) return;
+
+      const active = rootEl.querySelector(".swiper-slide-active");
+      const tagline = rootEl.querySelector<HTMLElement>("[data-hero-tagline]");
+      const cat = active?.querySelector<HTMLElement>("[data-hero-cat]");
+      const title = active?.querySelector<HTMLElement>("[data-hero-title]");
+      const activeImg = rootEl.querySelector<HTMLElement>(".swiper-slide-active img");
+
+      // --- Intro-on-load timeline: tagline → category → title (masked lines) ---
+      const intro = gsap.timeline({ defaults: { ease: EASE.out } });
+
+      if (tagline) {
+        gsap.set(tagline, { autoAlpha: 0, y: 20 });
+        intro.to(tagline, { autoAlpha: 1, y: 0, duration: DUR.base });
+      }
+
+      if (cat) {
+        gsap.set(cat, { autoAlpha: 0, y: 24 });
+        intro.to(cat, { autoAlpha: 1, y: 0, duration: DUR.base }, "-=0.45");
+      }
+
+      if (title) {
+        const split = SplitText.create(title, {
+          type: "lines",
+          mask: "lines",
+          linesClass: "gsap-line",
+        });
+        gsap.set(title, { autoAlpha: 1 });
+        gsap.set(split.lines, { yPercent: 115 });
+        intro.to(
+          split.lines,
+          { yPercent: 0, duration: DUR.slow, stagger: 0.12 },
+          "-=0.55"
+        );
+      }
+
+      // --- Ken Burns on the first active image ---
+      if (activeImg) {
+        gsap.fromTo(
+          activeImg,
+          { scale: 1.08 },
+          { scale: 1, duration: 6, ease: "none" }
+        );
+      }
+
+      // --- Scroll hand-off: content drifts up + fades as the hero leaves ---
+      const contents = gsap.utils.toArray<HTMLElement>("[data-hero-content]", rootEl);
+      if (contents.length) {
+        gsap.to(contents, {
+          yPercent: -30,
+          autoAlpha: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: rootEl,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      }
+    },
+    { scope: root }
+  );
+
+  // Re-animate the NEW active slide's category + title as blocks (no re-split),
+  // and retrigger Ken Burns on the new active image. Wrapped so its tweens join
+  // the useGSAP context for automatic cleanup.
+  const handleSlideChange = contextSafe(() => {
+    if (prefersReducedMotion()) return;
+    const rootEl = root.current;
+    if (!rootEl) return;
+
+    const active = rootEl.querySelector(".swiper-slide-active");
+    if (!active) return;
+
+    const cat = active.querySelector<HTMLElement>("[data-hero-cat]");
+    const title = active.querySelector<HTMLElement>("[data-hero-title]");
+    const img = active.querySelector<HTMLElement>("img");
+
+    const blocks = [cat, title].filter(Boolean) as HTMLElement[];
+    if (blocks.length) {
+      gsap.fromTo(
+        blocks,
+        { autoAlpha: 0, y: 24 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: DUR.base,
+          ease: EASE.out,
+          stagger: 0.08,
+          overwrite: true,
+        }
+      );
+    }
+
+    if (img) {
+      gsap.fromTo(
+        img,
+        { scale: 1.08 },
+        { scale: 1, duration: 6, ease: "none", overwrite: true }
+      );
+    }
+  });
+
   return (
-    <section className="relative h-screen w-full">
+    <section ref={root} className="relative h-screen w-full">
       {/* VADO Tagline - Top Left */}
       <div className="absolute top-32 left-0 right-0 z-10">
         <div className="container">
-          <span className="text-sm tracking-widest uppercase text-white/70">
+          <span
+            data-hero-tagline
+            className="text-sm tracking-widest uppercase text-white/70"
+          >
             Est. 1994 — Al Khobar
           </span>
         </div>
@@ -78,6 +205,7 @@ export default function HeroSlider() {
           bulletClass: "swiper-pagination-bullet",
           bulletActiveClass: "swiper-pagination-bullet-active",
         }}
+        onSlideChangeTransitionStart={handleSlideChange}
         className="h-full w-full"
       >
         {slides.map((slide, index) => (
@@ -98,16 +226,11 @@ export default function HeroSlider() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
               {/* Content Container - Bottom Left Position */}
-              <motion.div
-                className="absolute bottom-24 left-0 right-0"
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-              >
+              <div data-hero-content className="absolute bottom-24 left-0 right-0">
                 <div className="container">
                   {/* Category Tag */}
-                  <motion.span
-                    variants={fadeInUp}
+                  <span
+                    data-hero-cat
                     className="
                       inline-block mb-4
                       text-sm tracking-widest uppercase
@@ -115,11 +238,11 @@ export default function HeroSlider() {
                     "
                   >
                     {slide.category}
-                  </motion.span>
+                  </span>
 
                   {/* Title */}
-                  <motion.h2
-                    variants={fadeInUp}
+                  <h2
+                    data-hero-title
                     className="
                       text-4xl md:text-5xl lg:text-6xl
                       font-light text-white
@@ -127,20 +250,13 @@ export default function HeroSlider() {
                     "
                   >
                     {slide.title}
-                  </motion.h2>
+                  </h2>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* Custom Pagination Styles - positioned bottom center */}
-      <style jsx global>{`
-        .swiper-pagination {
-          bottom: 40px !important;
-        }
-      `}</style>
     </section>
   );
 }

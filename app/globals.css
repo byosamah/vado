@@ -15,7 +15,9 @@
   --color-surface: #f5f5f5;
 
   /* Typography */
-  --font-primary: var(--font-nunito-sans), 'Nunito Sans', sans-serif;
+  --font-display: var(--font-schibsted), 'Schibsted Grotesk', system-ui, sans-serif;
+  --font-body: var(--font-plex), 'IBM Plex Sans', system-ui, sans-serif;
+  --font-primary: var(--font-body); /* back-compat alias */
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -42,7 +44,40 @@
 @theme inline {
   --color-background: var(--color-background);
   --color-foreground: var(--color-text-primary);
-  --font-sans: var(--font-primary);
+  --font-sans: var(--font-body);
+}
+
+/* ============================================
+   GSAP REVEAL SYSTEM
+   ============================================ */
+
+/*
+ * FOUC guard: hide animatable elements before GSAP takes over, but ONLY once
+ * the inline boot script has added `.anim-ready` to <html> (JS on, motion
+ * allowed). With JS off or reduced motion, the class is never added and all
+ * content renders fully visible — no dependency on JS to see the page.
+ */
+html.anim-ready [data-reveal],
+html.anim-ready [data-headline],
+html.anim-ready [data-img-reveal] {
+  visibility: hidden;
+}
+
+/* SplitText line wrapper — masks live here so line reveals clip cleanly. */
+.gsap-line {
+  display: block;
+}
+
+/* Belt-and-suspenders: reduced motion always shows everything. */
+@media (prefers-reduced-motion: reduce) {
+  html [data-reveal],
+  html [data-headline],
+  html [data-img-reveal] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
 }
 
 /* ============================================
@@ -54,13 +89,16 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Lenis owns smooth scrolling now — native smooth-scroll would fight it. */
+  scroll-behavior: auto;
+  /* Offset in-page anchor targets so the fixed header doesn't cover section tops */
+  scroll-padding-top: 6rem;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-text-primary);
-  font-family: var(--font-primary);
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -72,24 +110,25 @@ body {
    ============================================ */
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-primary);
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-weight: 500;
   line-height: 1.2;
   margin: 0;
 }
 
 h1 {
   font-size: 72px;
-  letter-spacing: -1px;
+  letter-spacing: -0.025em;
 }
 
 h2 {
   font-size: 45px;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;
 }
 
 h3 {
   font-size: 32px;
+  letter-spacing: -0.01em;
 }
 
 h4 {
@@ -101,6 +140,7 @@ h5 {
 }
 
 h6 {
+  font-family: var(--font-body);
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -180,14 +220,28 @@ a {
 }
 
 .swiper-pagination-bullet {
+  position: relative;
   width: 8px;
   height: 8px;
   background: rgba(255, 255, 255, 0.5);
   opacity: 1;
 }
 
+/* Expand the touch target to ~40px without enlarging the visible dot */
+.swiper-pagination-bullet::before {
+  content: "";
+  position: absolute;
+  inset: -16px;
+}
+
 .swiper-pagination-bullet-active {
   background: #ffffff;
+}
+
+/* Hero pagination sits above the bottom edge (moved out of HeroSlider's
+   styled-jsx block, which broke the SSR build after the GSAP migration). */
+.swiper-pagination {
+  bottom: 40px !important;
 }
 
 /* ============================================

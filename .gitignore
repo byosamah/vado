@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# claude code (personal, local-only)
+.claude.local.md
+
+# playwright mcp artifacts (browser automation scratch)
+.playwright-mcp/

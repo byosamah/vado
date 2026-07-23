@@ -10,10 +10,18 @@
  * - Overlay gradient
  * - Title and description text
  * - Hover scale effect
+ *
+ * Animation (GSAP):
+ * - The <section> is the reveal root (useReveals). On scroll-in, each card is
+ *   tagged data-img-reveal: since the card wraps a bg-image DIV (no inner <img>),
+ *   only the clip-path wipe plays, uncovering the card from the edge.
+ * - The inner bg layer keeps its CSS group-hover:scale-105, the dark overlay
+ *   keeps its hover color shift, and the title/description are untouched.
+ * - Reduced motion: reveals leave all content fully visible.
  */
 
-import { motion } from "framer-motion";
-import { fadeInUp, staggerContainer, defaultViewport } from "@/lib/animations";
+import { useRef } from "react";
+import { useReveals } from "@/lib/gsap/reveals";
 
 const features = [
   {
@@ -33,20 +41,17 @@ const features = [
 ];
 
 export default function FeatureCards() {
+  const root = useRef<HTMLElement>(null);
+  useReveals(root);
+
   return (
-    <section className="section bg-white">
+    <section ref={root} className="section bg-white">
       <div className="container">
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={defaultViewport}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {features.map((feature) => (
-            <motion.div
+            <div
               key={feature.id}
-              variants={fadeInUp}
+              data-img-reveal
               className="group relative overflow-hidden aspect-[4/3] cursor-pointer"
             >
               {/* Background Image */}
@@ -72,9 +77,9 @@ export default function FeatureCards() {
                   {feature.description}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

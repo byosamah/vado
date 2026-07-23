@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev      # Start dev server at localhost:3000
+npm run dev      # Dev server on :3000 (if taken by another local app, use: npm run dev -- -p 3001)
 npm run build    # Production build
 npm run lint     # Run ESLint
 ```
@@ -52,31 +52,44 @@ CSS variables define the design tokens:
 
 Utility classes: `.container`, `.section`, `.underline-hover`, `.image-hover-scale`
 
-### Animations (`lib/animations.ts`)
-Framer Motion variants for consistent animations:
-- `fadeInUp`, `fadeIn`, `fadeInLeft`, `fadeInRight` — Reveal animations
-- `staggerContainer`, `staggerContainerSlow` — Parent wrappers for staggered children
-- `scaleIn`, `slideUp` — Alternative reveal effects
-- `defaultViewport` — Standard scroll-trigger settings (`once: true, amount: 0.2`)
+### Animations (GSAP + Lenis)
+GSAP + Lenis smooth scroll (Framer Motion was removed). Foundation in `lib/gsap/`:
+- `lib/gsap/gsap.ts`: single plugin registration + `EASE`/`DUR` tokens + `prefersReducedMotion()`
+- `lib/gsap/reveals.ts`: `useReveals(ref)` reveal engine (declarative, data-attribute driven)
+- `SmoothScroll` (Lenis + gsap.ticker) and `ScrollProgress`, both wired in `app/layout.tsx`
 
-Usage pattern:
+Usage: put a ref on the section root, call `useReveals(root)`, then tag elements:
 ```tsx
-<motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={defaultViewport}>
-  <motion.p variants={fadeInUp}>Content</motion.p>
-</motion.div>
+<section ref={root}>
+  <span data-reveal>Label</span>       {/* fade+rise; ="left"|"right"|"scale" */}
+  <h2 data-headline>Headline</h2>       {/* SplitText masked line reveal */}
+  <div data-img-reveal><img/></div>     {/* clip-wipe + inner scale */}
+</section>
 ```
+Bespoke moments (Hero, Quote, CTA, ServicesTabs) use `useGSAP` scoped to a ref; always early-return on `prefersReducedMotion()`.
 
 ### Key Libraries
-- **Swiper.js** — Carousels (HeroSlider, PortfolioShowcase, TestimonialsSlider)
-- **Framer Motion** — Scroll-triggered animations
-- **Lucide React** — Icons
+- **Swiper.js**: Carousels (HeroSlider, PortfolioShowcase)
+- **GSAP + ScrollTrigger + SplitText**: Scroll animations (`@gsap/react` `useGSAP`)
+- **Lenis**: Smooth scroll
+- **Lucide React**: Icons
+- **Web3Forms**: ContactSection form → emails info@vado.sa. Needs `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` in `.env.local` (restart dev to load). Testable only in a real browser; server-side/curl posts are rejected (free-plan block + Cloudflare challenge).
 
 ## Patterns
 
-**Client Components**: Any component using Swiper, Framer Motion, or React hooks needs `"use client"` directive.
+**Client Components**: Any component using Swiper, GSAP/`useGSAP`, or React hooks needs `"use client"` directive.
 
 **Section Structure**: Each section is self-contained with its own data, styling, and animations. No shared state between sections.
 
-**Typography**: Global `h1`–`h6` styles defined in globals.css. Responsive sizes handled via media queries at 1200px, 768px, 480px breakpoints.
+**Typography**: Two-face system: **Schibsted Grotesk** (display/headings, wght 500) plus **IBM Plex Sans** (body/labels), loaded via `next/font/google` in `app/layout.tsx`; tokens `--font-display`/`--font-body` in globals.css. IBM Plex Sans Arabic is the intended RTL sibling. Global `h1`–`h6` styles in globals.css; responsive at 1200/768/480px.
 
-**Images**: Currently using local `/images/` paths. Background images use inline styles with `bg-cover bg-center`.
+**Images**: Optimized `.webp` via `next/image` (not raw `<img>` or CSS backgrounds). Project images in `public/images/projects/<slug>/` as `hero.webp` plus `gallery-NN.webp`; project data centralized in `lib/projects.ts` (drives the homepage carousel and `/projects/[slug]` pages). Convert sources: `cwebp -resize <w> 0 -q 82 -m 6 in.png -o out.webp`.
+
+## Gotchas
+
+- **Turbopack panic** (Next 16): dev can crash with "Failed to write app endpoint" / ChunkLoadError. Fix: `rm -rf .next` then restart.
+- **Pre-existing lint**: a few `react/no-unescaped-entities` errors (apostrophes/quotes in CTABanner, QuoteBlock) predate current work, not introduced by your changes.
+- **No styled-jsx** (`<style jsx>`): under Turbopack SSR it rewrites multi-line `className` strings on host elements into invalid JS, causing a `SyntaxError`/500 that `tsc` does NOT catch. Keep global CSS in `app/globals.css`.
+- `npx tsc --noEmit` checks types only. Confirm SSR by loading the dev server; a real render catches runtime/SSR errors tsc misses.
+- `<html>` uses `suppressHydrationWarning` because the inline `ANIM_BOOT` script adds `.anim-ready` client-side only.
+- **`next/font` variables go on `<html>`, not `<body>`**: type tokens (`--font-display`/`--font-body`) live in `:root`, and a `:root` var referencing a next/font var scoped to `<body>` computes to empty, so text silently falls back to Tailwind's default sans. Verify in-browser: `getComputedStyle(document.documentElement).getPropertyValue('--font-display')` must be non-empty (tsc won't catch this).
