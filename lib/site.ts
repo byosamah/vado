@@ -14,6 +14,15 @@ export const LEGAL_NAME = "VISION Arch. & Engineering Consultants";
 export const FOUNDING_YEAR = "1994";
 
 export const CONTACT_EMAIL = "info@vado.sa";
+/**
+ * Display-only addresses for the careers and suppliers pages. These are shown
+ * to visitors so each audience sees a relevant address; the forms themselves
+ * still deliver to CONTACT_EMAIL via Web3Forms (the key controls the inbox).
+ * NOTE: for direct email to these to work, set them up as real inboxes or
+ * aliases that forward to info@vado.sa.
+ */
+export const CAREERS_EMAIL = "careers@vado.sa";
+export const SUPPLIERS_EMAIL = "suppliers@vado.sa";
 /** E.164 form for tel: links and schema. Displayed as +966 542 900 447. */
 export const CONTACT_PHONE = "+966542900447";
 

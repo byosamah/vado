@@ -24,8 +24,9 @@
  */
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { useReveals } from "@/lib/gsap/reveals";
-import { Send, Mail, Phone, MapPin } from "lucide-react";
+import { Send, Mail, Phone, MapPin, Briefcase, Package, ArrowRight } from "lucide-react";
 
 export default function ContactSection() {
   // Root ref for scroll-triggered reveals
@@ -114,7 +115,7 @@ export default function ContactSection() {
                   Get in Touch
                 </span>
               </div>
-              <h2 data-headline className="mb-6">
+              <h2 data-headline className="mb-8">
                 Ready to bring your
                 <br />
                 vision to life?
@@ -338,8 +339,45 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              {/* Established */}
+              {/* Careers & Suppliers — route non-client audiences to their
+                  own forms so this one stays for project enquiries */}
               <div className="mt-12 pt-8 border-t border-gray-200">
+                <p className="text-sm text-gray-500 mb-6">
+                  The form on the left is for project enquiries. If you are here
+                  for something else:
+                </p>
+                <div className="space-y-5">
+                  <div data-reveal className="flex items-start gap-4">
+                    <Briefcase className="w-5 h-5 mt-1 text-gray-600" />
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Careers</p>
+                      <Link
+                        href="/careers"
+                        className="text-lg inline-flex items-center gap-2 hover:text-gray-600 transition-colors"
+                      >
+                        Submit your CV
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+                  <div data-reveal className="flex items-start gap-4">
+                    <Package className="w-5 h-5 mt-1 text-gray-600" />
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Suppliers</p>
+                      <Link
+                        href="/suppliers"
+                        className="text-lg inline-flex items-center gap-2 hover:text-gray-600 transition-colors"
+                      >
+                        Register as a supplier
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Established */}
+              <div className="mt-10 pt-8 border-t border-gray-200">
                 <p className="text-sm text-gray-500">
                   Established 1994 • Al Khobar, Saudi Arabia
                 </p>

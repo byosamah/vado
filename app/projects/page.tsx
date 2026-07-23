@@ -42,11 +42,11 @@ export default function ProjectsIndexPage() {
               Selected Work
             </span>
 
-            <h1 className="text-4xl md:text-5xl font-light mt-4 max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-light mt-6 max-w-3xl">
               Architecture projects in Saudi Arabia
             </h1>
 
-            <p className="text-lg leading-relaxed text-gray-600 mt-8 max-w-2xl">
+            <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
               A selection of VADO&apos;s architecture and engineering work across
               the Eastern Province, spanning waterfront master plans, mixed-use
               destinations, commercial boulevards, and private residences. Each

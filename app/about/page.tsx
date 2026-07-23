@@ -98,7 +98,7 @@ export default function AboutPage() {
           <div className="container">
             <div className="max-w-4xl">
               {/* Eyebrow */}
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-3 mb-6">
                 <span className="w-2 h-2 bg-black rounded-full" />
                 <span className="text-sm tracking-widest uppercase text-gray-600">
                   About VADO

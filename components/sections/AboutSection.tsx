@@ -34,7 +34,7 @@ export default function AboutSection() {
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left Column - Text Content */}
-          <div className="space-y-8">
+          <div>
             {/* Subtitle with dot indicator */}
             <div data-reveal className="flex items-center gap-3">
               {/* Dot indicator - matches original design */}
@@ -45,7 +45,7 @@ export default function AboutSection() {
             </div>
 
             {/* Main Headline */}
-            <h2 data-headline>
+            <h2 data-headline className="mt-6">
               Where Vision
               <br />
               Becomes
@@ -54,7 +54,7 @@ export default function AboutSection() {
             </h2>
 
             {/* Description Paragraph */}
-            <p data-reveal className="text-lg leading-relaxed max-w-md">
+            <p data-reveal className="text-lg leading-relaxed max-w-lg mt-10">
               VADO (VISION Arch. & Engineering Consultants) is a multidisciplinary
               consultancy specialized in architecture, engineering, and project
               development. With decades of experience, VADO delivers innovative,

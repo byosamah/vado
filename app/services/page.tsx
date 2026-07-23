@@ -125,7 +125,7 @@ export default function ServicesPage() {
         {/* Intro */}
         <section className="container pt-12 md:pt-20 pb-16 md:pb-24">
           <div className="max-w-4xl">
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center gap-3 mb-6">
               <span className="w-2 h-2 bg-black rounded-full" />
               <span className="text-sm tracking-widest uppercase text-gray-600">
                 Our Services
@@ -134,7 +134,7 @@ export default function ServicesPage() {
 
             <h1>Architecture and engineering services in Saudi Arabia</h1>
 
-            <p className="text-lg leading-relaxed text-gray-600 mt-8 max-w-2xl">
+            <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
               VADO ({LEGAL_NAME}) is a multidisciplinary consultancy established
               in {FOUNDING_YEAR} and based in {ADDRESS.city}, {ADDRESS.country}.
               Our work spans four connected disciplines that carry a project from

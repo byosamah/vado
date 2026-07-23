@@ -84,9 +84,9 @@ export default function CTABanner() {
         <div className="max-w-3xl mx-auto text-center">
           <h2
             data-headline
-            className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-8"
+            className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-10"
           >
-            Let's Build The Future.
+            Let&apos;s Build The Future.
           </h2>
 
           <div data-reveal>

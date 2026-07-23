@@ -13,6 +13,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import ProjectGallery from "@/components/sections/ProjectGallery";
 import JsonLd from "@/components/seo/JsonLd";
 import { projectGraph } from "@/lib/schema";
 import {
@@ -132,7 +133,7 @@ export default async function ProjectPage({
               </span>
 
               {/* Title */}
-              <h1 className="text-4xl md:text-5xl font-light mt-4 mb-8">
+              <h1 className="text-4xl md:text-5xl font-light mt-6 mb-8">
                 {project.title}
               </h1>
 
@@ -168,22 +169,14 @@ export default async function ProjectPage({
           </div>
         </div>
 
-        {/* Gallery */}
+        {/* Gallery — clickable thumbnails that open a full-screen lightbox */}
         {project.gallery.length > 1 && (
           <div className="container pb-16 md:pb-24">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {project.gallery.slice(1).map((image, index) => (
-                <div key={index} className="relative aspect-[4/3] overflow-hidden">
-                  <Image
-                    src={image}
-                    alt={`${project.title} by VADO, ${project.category}, image ${index + 2}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                </div>
-              ))}
-            </div>
+            <ProjectGallery
+              images={project.gallery.slice(1)}
+              title={project.title}
+              category={project.category}
+            />
           </div>
         )}
 

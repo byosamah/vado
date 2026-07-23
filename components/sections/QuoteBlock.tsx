@@ -1,17 +1,17 @@
 "use client";
 
 /**
- * Quote Block Component
- * =====================
- * Large typography quote with a signature read-along reveal. The blockquote is
- * SplitText'd into words and, as the section scrolls through the viewport, a
- * scrubbed timeline lifts each word from dim (autoAlpha 0.15) to full in
- * sequence — a premium read-along effect tied directly to scroll position
- * (linear "none" ease, start "top 80%" → end "center 55%"). The attribution
- * line rides the shared declarative reveal engine (data-reveal).
+ * Vision Statement Component
+ * ==========================
+ * The VADO vision statement, introduced by a small section label and given a
+ * signature read-along reveal. The statement is SplitText'd into words and, as
+ * the section scrolls through the viewport, a scrubbed timeline lifts each word
+ * from dim (autoAlpha 0.15) to full in sequence — a premium read-along effect
+ * tied directly to scroll position (linear "none" ease, start "top 80%" → end
+ * "center 55%"). The label rides the shared declarative reveal engine (data-reveal).
  *
  * Under prefers-reduced-motion the bespoke read-along is skipped entirely, so
- * the quote stays fully visible with no split and no motion.
+ * the statement stays fully visible with no split and no motion.
  */
 
 import { useRef } from "react";
@@ -20,7 +20,7 @@ import { useGSAP, gsap, SplitText, prefersReducedMotion } from "@/lib/gsap/gsap"
 
 export default function QuoteBlock() {
   const root = useRef<HTMLElement>(null);
-  const quoteRef = useRef<HTMLQuoteElement>(null);
+  const quoteRef = useRef<HTMLParagraphElement>(null);
 
   // Declarative reveals — attribution line fades + rises on scroll.
   useReveals(root);
@@ -56,25 +56,23 @@ export default function QuoteBlock() {
     <section ref={root} className="section bg-gray-50">
       <div className="container">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Quote Text */}
-          <blockquote
+          {/* Section label */}
+          <p
+            data-reveal
+            className="text-sm tracking-widest uppercase text-gray-500 mb-8"
+          >
+            VADO Vision Statement
+          </p>
+
+          {/* Vision Statement */}
+          <p
             ref={quoteRef}
             className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed text-gray-800"
           >
-            "To shape meaningful spaces through thoughtful design and engineering
-            excellence—creating environments that inspire, serve, and sustain
-            communities."
-          </blockquote>
-
-          {/* Attribution */}
-          <div className="mt-8">
-            <p
-              data-reveal
-              className="text-sm tracking-widest uppercase text-gray-600"
-            >
-              — VADO Vision Statement
-            </p>
-          </div>
+            To shape meaningful spaces through thoughtful design and engineering
+            excellence, creating environments that inspire, serve, and sustain
+            communities.
+          </p>
         </div>
       </div>
     </section>
