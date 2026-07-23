@@ -13,6 +13,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import JsonLd from "@/components/seo/JsonLd";
+import { projectGraph } from "@/lib/schema";
 import {
   getProjectBySlug,
   getAdjacentProjects,
@@ -37,17 +39,38 @@ export async function generateMetadata({
   const project = getProjectBySlug(slug);
 
   if (!project) {
+    // Bare title; the root layout template appends "| VADO".
     return {
-      title: "Project Not Found | VADO Consultants",
+      title: "Project Not Found",
     };
   }
 
+  // A tighter, self-contained description for snippets: project name, type, and
+  // location, then the opening of the narrative. Reads well in AI answers.
+  const metaDescription = `${project.title} by VADO: a ${project.type.toLowerCase()} in ${project.location}. ${project.description}`.slice(
+    0,
+    200
+  );
+  const canonicalPath = `/projects/${project.slug}`;
+
   return {
-    title: `${project.title} | VADO Consultants`,
-    description: project.description.slice(0, 160),
+    title: `${project.title} | ${project.type}`,
+    description: metaDescription,
+    alternates: {
+      canonical: canonicalPath,
+    },
     openGraph: {
-      title: project.title,
-      description: project.description.slice(0, 160),
+      type: "article",
+      siteName: "VADO",
+      title: `${project.title} | VADO`,
+      description: metaDescription,
+      url: canonicalPath,
+      images: [{ url: project.heroImage, alt: project.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} | VADO`,
+      description: metaDescription,
       images: [project.heroImage],
     },
   };
@@ -69,6 +92,9 @@ export default async function ProjectPage({
 
   return (
     <>
+      {/* Per-project structured data: CreativeWork + BreadcrumbList */}
+      <JsonLd data={projectGraph(project)} />
+
       <Header forceSolid />
 
       <main className="pt-24">

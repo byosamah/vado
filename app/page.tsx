@@ -24,6 +24,10 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
+// SEO: homepage FAQ structured data (extractable Q&A for AI answer engines)
+import JsonLd from "@/components/seo/JsonLd";
+import { faqSchema } from "@/lib/schema";
+
 // Section Components
 import HeroSlider from "@/components/sections/HeroSlider";
 import AboutSection from "@/components/sections/AboutSection";
@@ -41,6 +45,9 @@ import CTABanner from "@/components/sections/CTABanner";
 export default function Home() {
   return (
     <>
+      {/* FAQ structured data (additive, invisible) — does not alter section order */}
+      <JsonLd data={faqSchema()} />
+
       {/* Sticky Header - Transparent on hero, solid on scroll */}
       <Header />
 
