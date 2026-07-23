@@ -75,6 +75,12 @@ Bespoke moments (Hero, Quote, CTA, ServicesTabs) use `useGSAP` scoped to a ref; 
 - **Lucide React**: Icons
 - **Web3Forms**: ContactSection form → emails info@vado.sa. Needs `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` in `.env.local` (restart dev to load). Testable only in a real browser; server-side/curl posts are rejected (free-plan block + Cloudflare challenge).
 
+### SEO & Metadata Layer
+Beyond the homepage there are real routes: `/about`, `/services`, `/projects` (index), `/projects/[slug]`. Subpages are **server components** (no `"use client"`) for SEO + perf; they reuse `<Header forceSolid />` + `<Footer />`.
+- `lib/site.ts` — single source of truth for the canonical URL (`https://vado.sa`) plus brand facts (NAP, services). Consumed by page metadata, JSON-LD, `app/robots.ts`, `app/sitemap.ts`, and `public/llms.txt`. Change the domain here in ONE place.
+- `lib/schema.ts` + `components/seo/JsonLd.tsx` — JSON-LD builders (Organization/ProfessionalService/WebSite/FAQ, per-project CreativeWork), rendered via `<JsonLd data={...} />`.
+- Homepage `<h1>` is `sr-only` (the hero is an image slider with cycling `h2` titles); the short `META_DESCRIPTION` feeds the SERP while the long `SITE_DESCRIPTION` feeds JSON-LD/llms.txt.
+
 ## Patterns
 
 **Client Components**: Any component using Swiper, GSAP/`useGSAP`, or React hooks needs `"use client"` directive.
@@ -93,3 +99,5 @@ Bespoke moments (Hero, Quote, CTA, ServicesTabs) use `useGSAP` scoped to a ref; 
 - `npx tsc --noEmit` checks types only. Confirm SSR by loading the dev server; a real render catches runtime/SSR errors tsc misses.
 - `<html>` uses `suppressHydrationWarning` because the inline `ANIM_BOOT` script adds `.anim-ready` client-side only.
 - **`next/font` variables go on `<html>`, not `<body>`**: type tokens (`--font-display`/`--font-body`) live in `:root`, and a `:root` var referencing a next/font var scoped to `<body>` computes to empty, so text silently falls back to Tailwind's default sans. Verify in-browser: `getComputedStyle(document.documentElement).getPropertyValue('--font-display')` must be non-empty (tsc won't catch this).
+- **Mobile Lighthouse ~92 is a Lantern-simulation artifact, not real slowness** (observed LCP ~80ms, CLS 0, desktop 100). The hero's Swiper + GSAP client JS gates the LCP text under the throttled-mobile model; changing/removing the hero animation and deferring below-fold JS do NOT move it. Only a server-rendered hero would. Don't re-chase 95 without that rework.
+- **AVIF regressed mobile LCP** (heavier decode on throttled CPUs, measured 99→95). `next.config.ts` stays WebP-only; do not re-add `formats: ['image/avif', ...]`.
