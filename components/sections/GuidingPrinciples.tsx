@@ -14,35 +14,26 @@
  *  - The "What guides us" subtitle fades and rises in on scroll (data-reveal).
  *  - Each principle column (index, title, description) reveals as a unit;
  *    the three siblings batch together so they stagger naturally.
- *  - The border-left dividers, indices, and grid layout are untouched.
  *  - prefers-reduced-motion leaves every element fully visible, no transforms.
+ *
+ * RTL: the column dividers use logical border-s / first:border-s-0, so the
+ * hairline sits between columns in both directions instead of stranding
+ * itself on the outer edge when the grid mirrors.
  */
 
 import { useRef } from "react";
 import { useReveals } from "@/lib/gsap/reveals";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-const principles = [
-  {
-    id: "01",
-    title: "Innovation",
-    description:
-      "We turn vision into architecture, pursuing creative, forward-thinking design that answers to context and purpose.",
-  },
-  {
-    id: "02",
-    title: "Sustainability",
-    description:
-      "We design responsibly, shaping functional environments built to serve communities and endure for generations.",
-  },
-  {
-    id: "03",
-    title: "Precision",
-    description:
-      "We hold to engineering rigor and disciplined execution, from the first concept to the final detail on site.",
-  },
-];
+interface GuidingPrinciplesProps {
+  principles: Dictionary["principles"];
+  copy: Dictionary["home"]["principles"];
+}
 
-export default function GuidingPrinciples() {
+export default function GuidingPrinciples({
+  principles,
+  copy,
+}: GuidingPrinciplesProps) {
   const root = useRef<HTMLElement>(null);
   useReveals(root);
 
@@ -56,7 +47,7 @@ export default function GuidingPrinciples() {
         >
           <span className="w-2 h-2 bg-white rounded-full" />
           <span className="text-sm tracking-widest uppercase text-white/60">
-            What guides us
+            {copy.kicker}
           </span>
         </div>
 
@@ -66,7 +57,7 @@ export default function GuidingPrinciples() {
             <div
               key={principle.id}
               data-reveal
-              className="md:pl-8 md:border-l md:border-white/15 md:first:border-l-0 md:first:pl-0"
+              className="md:ps-8 md:border-s md:border-white/15 md:first:border-s-0 md:first:ps-0"
             >
               {/* Index */}
               <span className="block text-sm tracking-widest text-white/40 mb-6">

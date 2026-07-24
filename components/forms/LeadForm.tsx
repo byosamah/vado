@@ -8,11 +8,16 @@
  * while sharing one submit lifecycle, one honeypot, and one set of styles
  * (matching the homepage ContactSection). Submissions go through the shared
  * Web3Forms helper; the `subject` tags where they came from.
+ *
+ * The component holds no copy of its own. Labels, placeholders, button text,
+ * and status messages all arrive as props from the calling page's dictionary,
+ * so it renders correctly in any language with no changes here.
  */
 
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { submitToWeb3Forms } from "@/lib/web3forms";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 export interface LeadFormField {
   name: string;
@@ -20,6 +25,12 @@ export interface LeadFormField {
   type?: "text" | "email" | "tel" | "url" | "textarea";
   required?: boolean;
   placeholder?: string;
+  /**
+   * Force left-to-right entry regardless of page direction. Set on fields whose
+   * value is inherently Latin (email, phone, URL) so the caret and any leading
+   * "+" or "https://" behave correctly on an Arabic page.
+   */
+  ltr?: boolean;
 }
 
 interface LeadFormProps {
@@ -30,6 +41,8 @@ interface LeadFormProps {
   successText: string;
   /** Displayed in the error state so people have another way to reach us. */
   fallbackEmail: string;
+  /** Shared form strings (status messages, required marker) for this locale. */
+  forms: Dictionary["forms"];
 }
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -40,6 +53,7 @@ export default function LeadForm({
   submitLabel,
   successText,
   fallbackEmail,
+  forms,
 }: LeadFormProps) {
   // A blank value per configured field, keyed by field name.
   const emptyValues = () =>
@@ -60,7 +74,10 @@ export default function LeadForm({
     setStatus("submitting");
     setErrorMessage("");
 
-    const result = await submitToWeb3Forms(e.currentTarget, subject);
+    const result = await submitToWeb3Forms(e.currentTarget, subject, {
+      genericError: forms.genericError,
+      networkError: forms.networkError,
+    });
 
     if (result.success) {
       setStatus("success");
@@ -96,7 +113,7 @@ export default function LeadForm({
             className="block text-sm font-medium text-gray-700 mb-2"
           >
             {field.label}
-            {field.required && " *"}
+            {field.required && forms.requiredMark}
           </label>
           {field.type === "textarea" ? (
             <textarea
@@ -118,6 +135,7 @@ export default function LeadForm({
               onChange={handleChange}
               required={field.required}
               placeholder={field.placeholder}
+              dir={field.ltr ? "ltr" : undefined}
               className={fieldClasses}
             />
           )}
@@ -133,12 +151,12 @@ export default function LeadForm({
             : "bg-black text-white hover:bg-gray-800"
         }`}
       >
-        {status === "submitting" && "Sending..."}
-        {status === "success" && "Sent!"}
+        {status === "submitting" && forms.sending}
+        {status === "success" && forms.sentShort}
         {(status === "idle" || status === "error") && (
           <>
             {submitLabel}
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4 rtl:-scale-x-100" />
           </>
         )}
       </button>
@@ -151,17 +169,15 @@ export default function LeadForm({
       )}
       {status === "error" && (
         <p role="alert" className="text-sm text-red-600 mt-4">
-          {errorMessage} Or email us directly at{" "}
-          <a href={`mailto:${fallbackEmail}`} className="underline">
+          {errorMessage} {forms.orEmailUs}{" "}
+          <a href={`mailto:${fallbackEmail}`} className="underline" dir="ltr">
             {fallbackEmail}
           </a>
           .
         </p>
       )}
       {(status === "idle" || status === "submitting") && (
-        <p className="text-sm text-gray-500 mt-4">
-          We typically respond within 24-48 hours.
-        </p>
+        <p className="text-sm text-gray-500 mt-4">{forms.responseNote}</p>
       )}
     </form>
   );

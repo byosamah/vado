@@ -18,26 +18,16 @@
 import { useRef } from "react";
 import { useReveals } from "@/lib/gsap/reveals";
 import Link from "next/link";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-const links = [
-  {
-    id: 1,
-    text: "Explore our projects",
-    href: "#portfolio",
-  },
-  {
-    id: 2,
-    text: "Learn about our vision",
-    href: "#about",
-  },
-  {
-    id: 3,
-    text: "Start your project today",
-    href: "#contact",
-  },
-];
+/** In-page targets, paired with dict.hidden.servicesLinks BY INDEX. */
+const HREFS = ["#portfolio", "#about", "#contact"];
 
-export default function ServicesLinks() {
+export default function ServicesLinks({
+  links,
+}: {
+  links: Dictionary["hidden"]["servicesLinks"];
+}) {
   const root = useRef<HTMLElement>(null);
   useReveals(root);
 
@@ -47,10 +37,10 @@ export default function ServicesLinks() {
     <section ref={root} className="py-16 md:py-24 bg-white border-t border-gray-100">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {links.map((link) => (
-            <div key={link.id} data-reveal>
+          {links.map((text, index) => (
+            <div key={HREFS[index]} data-reveal>
               <Link
-                href={link.href}
+                href={HREFS[index]}
                 className="
                   inline-flex items-center min-h-11
                   text-xl md:text-2xl font-light
@@ -61,7 +51,7 @@ export default function ServicesLinks() {
                 {/* underline-hover lives on an inner span: its ::after hangs at
                     bottom:-2px of the element box, so padding the link directly
                     would drop the underline far below the text. */}
-                <span className="underline-hover">{link.text}</span>
+                <span className="underline-hover">{text}</span>
               </Link>
             </div>
           ))}

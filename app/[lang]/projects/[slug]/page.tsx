@@ -3,6 +3,10 @@
  * ===================
  * Individual project page with minimalist architecture firm aesthetic.
  * Clean layout, generous whitespace, images that speak for themselves.
+ *
+ * Both language editions share ONE slug, so /en/projects/matal and
+ * /ar/projects/matal are the same project described twice. That is what lets
+ * the language switcher stay on the page you were reading.
  */
 
 import { notFound } from "next/navigation";
@@ -16,61 +20,65 @@ import Footer from "@/components/layout/Footer";
 import ProjectGallery from "@/components/sections/ProjectGallery";
 import JsonLd from "@/components/seo/JsonLd";
 import { projectGraph } from "@/lib/schema";
+import { buildAlternates } from "@/lib/seo";
+import { SITE_NAME } from "@/lib/site";
+import { LOCALES, OG_LOCALES, isLocale, localePath } from "@/lib/i18n/config";
+import { getDictionary, t } from "@/lib/i18n/get-dictionary";
 import {
   getProjectBySlug,
   getAdjacentProjects,
-  getAllProjects,
+  getProjectSlugs,
 } from "@/lib/projects";
 
-// Generate static params for all projects
-export async function generateStaticParams() {
-  const projects = getAllProjects();
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
+/** Every project, in every locale. */
+export function generateStaticParams() {
+  return LOCALES.flatMap((lang) =>
+    getProjectSlugs().map((slug) => ({ lang, slug }))
+  );
 }
 
-// Dynamic metadata for SEO
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const { lang, slug } = await params;
+  if (!isLocale(lang)) return {};
+
+  const dict = getDictionary(lang);
+  const project = getProjectBySlug(slug, lang);
 
   if (!project) {
     // Bare title; the root layout template appends "| VADO".
-    return {
-      title: "Project Not Found",
-    };
+    return { title: dict.pages.project.notFoundTitle };
   }
 
   // A tighter, self-contained description for snippets: project name, type, and
   // location, then the opening of the narrative. Reads well in AI answers.
-  const metaDescription = `${project.title} by VADO: a ${project.type.toLowerCase()} in ${project.location}. ${project.description}`.slice(
-    0,
-    200
-  );
-  const canonicalPath = `/projects/${project.slug}`;
+  const metaDescription =
+    `${project.title} — ${project.type}, ${project.location}. ${project.description}`.slice(
+      0,
+      200
+    );
+  const path = `/projects/${project.slug}`;
+  const alternates = buildAlternates(lang, path);
 
   return {
     title: `${project.title} | ${project.type}`,
     description: metaDescription,
-    alternates: {
-      canonical: canonicalPath,
-    },
+    alternates,
     openGraph: {
       type: "article",
-      siteName: "VADO",
-      title: `${project.title} | VADO`,
+      siteName: SITE_NAME,
+      title: `${project.title} | ${SITE_NAME}`,
       description: metaDescription,
-      url: canonicalPath,
+      url: alternates.canonical,
+      locale: OG_LOCALES[lang],
       images: [{ url: project.heroImage, alt: project.title }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${project.title} | VADO`,
+      title: `${project.title} | ${SITE_NAME}`,
       description: metaDescription,
       images: [project.heroImage],
     },
@@ -80,33 +88,42 @@ export async function generateMetadata({
 export default async function ProjectPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }) {
-  const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const { lang, slug } = await params;
+  if (!isLocale(lang)) notFound();
+
+  const dict = getDictionary(lang);
+  const copy = dict.pages.project;
+  const project = getProjectBySlug(slug, lang);
 
   if (!project) {
     notFound();
   }
 
-  const { previous, next } = getAdjacentProjects(slug);
+  const { previous, next } = getAdjacentProjects(slug, lang);
 
   return (
     <>
       {/* Per-project structured data: CreativeWork + BreadcrumbList */}
-      <JsonLd data={projectGraph(project)} />
+      <JsonLd data={projectGraph(project, lang, dict)} />
 
-      <Header forceSolid />
+      <Header
+        lang={lang}
+        nav={dict.nav}
+        langSwitcher={dict.langSwitcher}
+        forceSolid
+      />
 
-      <main className="pt-24">
+      <main id="main" className="pt-24">
         {/* Back Navigation */}
         <div className="container py-8">
           <Link
-            href="/#portfolio"
+            href={localePath(lang, "/projects")}
             className="inline-flex items-center gap-2 py-3 -my-3 text-sm tracking-wide text-gray-600 hover:text-black transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Projects
+            <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+            {copy.back}
           </Link>
         </div>
 
@@ -114,7 +131,11 @@ export default async function ProjectPage({
         <div className="relative w-full h-[60vh]">
           <Image
             src={project.heroImage}
-            alt={`${project.title}, ${project.type} by VADO in ${project.location}`}
+            alt={t(copy.heroAlt, {
+              title: project.title,
+              type: project.type,
+              location: project.location,
+            })}
             fill
             className="object-cover"
             priority
@@ -125,7 +146,7 @@ export default async function ProjectPage({
         {/* Project Content */}
         <div className="container py-16 md:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            {/* Left Column — Title & Description */}
+            {/* Title & Description */}
             <div className="lg:col-span-7">
               {/* Category Label */}
               <span className="text-sm tracking-widest uppercase text-gray-500">
@@ -133,9 +154,7 @@ export default async function ProjectPage({
               </span>
 
               {/* Title */}
-              <h1 className="mt-6">
-                {project.title}
-              </h1>
+              <h1 className="mt-6">{project.title}</h1>
 
               {/* Description */}
               <p className="text-lg leading-relaxed text-gray-600 mt-10">
@@ -143,27 +162,27 @@ export default async function ProjectPage({
               </p>
             </div>
 
-            {/* Right Column — Project Details */}
+            {/* Project Details */}
             <div className="lg:col-span-5">
-              <div className="lg:pl-8 lg:border-l border-gray-200">
+              <div className="lg:ps-8 lg:border-s border-gray-200">
                 {/* Eyebrow label (span, not a heading): as an h3 the global
                     type scale would force it to 32px, but it's authored as the
                     site-wide 14px kicker pattern. */}
                 <span className="block text-sm tracking-widest uppercase text-gray-500 mb-6">
-                  Project Details
+                  {copy.detailsLabel}
                 </span>
 
                 <dl className="space-y-4">
                   <div>
-                    <dt className="text-sm text-gray-500">Client</dt>
+                    <dt className="text-sm text-gray-500">{copy.client}</dt>
                     <dd className="text-base mt-1">{project.client}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm text-gray-500">Location</dt>
+                    <dt className="text-sm text-gray-500">{copy.location}</dt>
                     <dd className="text-base mt-1">{project.location}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm text-gray-500">Type</dt>
+                    <dt className="text-sm text-gray-500">{copy.type}</dt>
                     <dd className="text-base mt-1">{project.type}</dd>
                   </div>
                 </dl>
@@ -179,24 +198,27 @@ export default async function ProjectPage({
               images={project.gallery.slice(1)}
               title={project.title}
               category={project.category}
+              lang={lang}
+              gallery={dict.gallery}
             />
           </div>
         )}
 
-        {/* Project Navigation */}
+        {/* Project Navigation. "Previous" sits on the leading side in both
+            directions, so the pair mirrors with the rest of the layout. */}
         <div className="border-t border-gray-200">
           <div className="container">
             <div className="flex items-center justify-between py-8">
               {/* Previous */}
               {previous ? (
                 <Link
-                  href={`/projects/${previous.slug}`}
+                  href={localePath(lang, `/projects/${previous.slug}`)}
                   className="group flex items-center gap-3 py-2 -my-2 text-gray-600 hover:text-black transition-colors"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
                   <div>
                     <span className="text-xs tracking-widest uppercase text-gray-400 block">
-                      Previous
+                      {copy.previous}
                     </span>
                     <span className="text-sm">{previous.title}</span>
                   </div>
@@ -208,16 +230,16 @@ export default async function ProjectPage({
               {/* Next */}
               {next ? (
                 <Link
-                  href={`/projects/${next.slug}`}
-                  className="group flex items-center gap-3 py-2 -my-2 text-right text-gray-600 hover:text-black transition-colors"
+                  href={localePath(lang, `/projects/${next.slug}`)}
+                  className="group flex items-center gap-3 py-2 -my-2 text-end text-gray-600 hover:text-black transition-colors"
                 >
                   <div>
                     <span className="text-xs tracking-widest uppercase text-gray-400 block">
-                      Next
+                      {copy.next}
                     </span>
                     <span className="text-sm">{next.title}</span>
                   </div>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </Link>
               ) : (
                 <div />
@@ -227,7 +249,7 @@ export default async function ProjectPage({
         </div>
       </main>
 
-      <Footer />
+      <Footer lang={lang} footer={dict.footer} nav={dict.nav} />
     </>
   );
 }

@@ -5,9 +5,14 @@
  * =====================
  * Full-screen hero slider using Swiper.js with fade effect, choreographed with GSAP.
  *
+ * Slide COPY is not duplicated here: each slide names a project slug and its own
+ * hero crop, then reads the title and category off the resolved project list.
+ * That way a project renamed in lib/projects.ts renames itself in the hero, in
+ * both languages, with no second edit.
+ *
  * Motion (GSAP, bespoke via useGSAP scoped to the <section> root):
- * - Intro-on-load timeline (once): the top-left tagline reveals, then the ACTIVE
- *   slide's category (fade + y), then its title as a SplitText masked LINE reveal.
+ * - Intro-on-load timeline (once): the tagline reveals, then the ACTIVE slide's
+ *   category (fade + y), then its title as a SplitText masked LINE reveal.
  *   All intro targets live inside ".swiper-slide-active".
  * - Slide change (onSlideChangeTransitionStart): the NEW active slide's category +
  *   title re-animate as whole BLOCKS (fade + y). SplitText is NOT re-run per change,
@@ -17,7 +22,10 @@
  * - Scroll hand-off: a scrubbed ScrollTrigger drifts the slide content up + fades it
  *   out as the hero leaves the viewport (yPercent + autoAlpha, top top → bottom top).
  * - prefers-reduced-motion: all GSAP is skipped and every element stays fully visible;
- *   Swiper still autoplays. Gradient overlay + pagination markup are always present.
+ *   Swiper still autoplays.
+ *
+ * All hero motion is vertical (y) or scale, so none of it needs mirroring; only
+ * Swiper's own direction does, via the `dir` prop.
  */
 
 import { useRef } from "react";
@@ -32,42 +40,48 @@ import {
   DUR,
   prefersReducedMotion,
 } from "@/lib/gsap/gsap";
+import { getDirection, type Locale } from "@/lib/i18n/config";
+import { t, type Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Project } from "@/lib/projects";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 
-// Hero slides data - VADO architecture projects
-const slides = [
+/**
+ * Which project each hero slide shows, and which crop of it. Deliberately not
+ * the project's own heroImage: these are wide, atmospheric frames chosen to
+ * work full-bleed behind the title.
+ */
+const HERO_SLIDES = [
   {
-    id: 1,
+    slug: "al-hamra-waterfront",
     image: "/images/projects/al-hamra-waterfront/gallery-01.webp",
-    title: "Al Hamra Waterfront",
-    category: "Master Plan",
   },
+  { slug: "matal", image: "/images/projects/matal/gallery-07.webp" },
   {
-    id: 2,
-    image: "/images/projects/matal/gallery-07.webp",
-    title: "Matal",
-    category: "Waterfront",
-  },
-  {
-    id: 3,
+    slug: "courtyard-villa",
     image: "/images/projects/courtyard-villa/gallery-01.webp",
-    title: "Courtyard Villa",
-    category: "Residential",
   },
-  {
-    id: 4,
-    image: "/images/projects/tholal/gallery-08.webp",
-    title: "Tholal",
-    category: "Commercial",
-  },
+  { slug: "tholal", image: "/images/projects/tholal/gallery-08.webp" },
 ];
 
-export default function HeroSlider() {
+interface HeroSliderProps {
+  lang: Locale;
+  hero: Dictionary["home"]["hero"];
+  projects: Project[];
+}
+
+export default function HeroSlider({ lang, hero, projects }: HeroSliderProps) {
   const root = useRef<HTMLElement>(null);
+
+  // Pair each slide with its project. A slide whose project was deleted from
+  // lib/projects.ts drops out rather than rendering an empty title.
+  const slides = HERO_SLIDES.map((slide) => {
+    const project = projects.find((p) => p.slug === slide.slug);
+    return project ? { ...slide, project } : null;
+  }).filter((slide): slide is NonNullable<typeof slide> => slide !== null);
 
   const { contextSafe } = useGSAP(
     () => {
@@ -134,7 +148,7 @@ export default function HeroSlider() {
         });
       }
     },
-    { scope: root }
+    { scope: root, dependencies: [lang] }
   );
 
   // Re-animate the NEW active slide's category + title as blocks (no re-split),
@@ -182,19 +196,23 @@ export default function HeroSlider() {
   // and pagination below the fold on load.
   return (
     <section ref={root} className="relative h-dvh w-full">
-      {/* VADO Tagline - Top Left */}
+      {/* VADO Tagline - top of the hero */}
       <div className="absolute top-32 left-0 right-0 z-10">
         <div className="container">
           <span
             data-hero-tagline
             className="text-sm tracking-widest uppercase text-white/70"
           >
-            Est. 1994 — Al Khobar
+            {hero.tagline}
           </span>
         </div>
       </div>
 
       <Swiper
+        // Swiper caches direction at init, so the key forces a clean re-init
+        // if the tree is ever reused across a locale change.
+        key={lang}
+        dir={getDirection(lang)}
         modules={[Autoplay, EffectFade, Pagination]}
         effect="fade"
         fadeEffect={{ crossFade: true }}
@@ -212,13 +230,16 @@ export default function HeroSlider() {
         className="h-full w-full"
       >
         {slides.map((slide, index) => (
-          <SwiperSlide key={slide.id}>
+          <SwiperSlide key={slide.slug}>
             {/* Slide Container */}
             <div className="relative h-full w-full">
               {/* Background Image - Optimized with Next.js Image */}
               <Image
                 src={slide.image}
-                alt={`${slide.title}, ${slide.category} project by VADO`}
+                alt={t(hero.slideAlt, {
+                  title: slide.project.title,
+                  category: slide.project.category,
+                })}
                 fill
                 className="object-cover"
                 priority={index === 0}
@@ -228,7 +249,7 @@ export default function HeroSlider() {
               {/* Dark Gradient Overlay - for text readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-              {/* Content Container - Bottom Left Position */}
+              {/* Content Container - anchored to the bottom */}
               <div data-hero-content className="absolute bottom-24 left-0 right-0">
                 <div className="container">
                   {/* Category Tag */}
@@ -240,7 +261,7 @@ export default function HeroSlider() {
                       text-white/80
                     "
                   >
-                    {slide.category}
+                    {slide.project.category}
                   </span>
 
                   {/* Title */}
@@ -248,7 +269,7 @@ export default function HeroSlider() {
                     data-hero-title
                     className="text-white max-w-2xl"
                   >
-                    {slide.title}
+                    {slide.project.title}
                   </h2>
                 </div>
               </div>

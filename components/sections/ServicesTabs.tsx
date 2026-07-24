@@ -5,6 +5,9 @@
  * ============================
  * Vertical accordion showcasing VADO services, animated with the shared GSAP system.
  *
+ * Service copy comes from the dictionary; the paired imagery is keyed here by
+ * service id, so the two never fall out of step when a name is translated.
+ *
  * Design:
  * - 4 columns with vertical text titles
  * - +/− icons for expand/collapse (− turns black once a column is locked)
@@ -22,54 +25,49 @@
  * Mobile keeps a plain tap-to-toggle accordion (no hover on touch).
  *
  * Motion (GSAP):
- * - Section entrance: each desktop service column carries `data-reveal`, so the
- *   shared reveal engine (useReveals) rises them in on scroll.
+ * - Section entrance: each desktop service column carries `data-reveal`.
  * - Desktop expanded panel: a bespoke useGSAP keyed to `activeId` fades + slides
- *   the active panel's image and description in (DUR.base, EASE.out).
+ *   the active panel's image and description in. The x offset is multiplied by
+ *   directionSign(), so in Arabic the panel slides in from the matching side.
  * - Mobile expand/collapse: pure CSS grid-rows technique (grid-rows-[1fr] ↔ [0fr]).
- * - Reduced motion: bespoke animation early-returns, leaving content fully visible.
+ * - Reduced motion: bespoke animation early-returns, leaving content visible.
+ *
+ * RTL: the vertical column titles keep `writing-mode`. With the default
+ * `text-orientation: mixed`, a horizontal-script run (Arabic included) is
+ * rotated sideways as a WHOLE RUN, so the cursive joins survive. Only
+ * `text-orientation: upright` would isolate glyphs, and that is not used here.
+ * Column rules and paddings use logical properties so they mirror correctly.
  */
 
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useReveals } from "@/lib/gsap/reveals";
-import { gsap, useGSAP, EASE, DUR, prefersReducedMotion } from "@/lib/gsap/gsap";
+import {
+  gsap,
+  useGSAP,
+  EASE,
+  DUR,
+  prefersReducedMotion,
+  directionSign,
+} from "@/lib/gsap/gsap";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-const services = [
-  {
-    id: "architectural-design",
-    label: "Architectural Design",
-    image: "/images/projects/matal/gallery-12.webp",
-    description:
-      "Creative architectural solutions that balance aesthetics, function, and context turning vision into architecture.",
-  },
-  {
-    id: "engineering-design",
-    label: "Engineering Design",
-    image: "/images/projects/tholal/gallery-10.webp",
-    description:
-      "Integrated structural and MEP engineering ensuring safety, efficiency, and sustainability in every project.",
-  },
-  {
-    id: "project-management",
-    label: "Project Management",
-    image: "/images/projects/al-hamra-waterfront/gallery-04.webp",
-    description:
-      "Comprehensive project management from concept to completion, ensuring quality, schedule, and budget alignment.",
-  },
-  {
-    id: "site-supervision",
-    label: "Site Supervision",
-    image: "/images/projects/matal/gallery-10.webp",
-    description:
-      "Dedicated on-site supervision delivering precision, consistency, and construction excellence.",
-  },
-];
+/** Project imagery paired with each discipline, keyed by the service id. */
+const SERVICE_IMAGES: Record<string, string> = {
+  "architectural-design": "/images/projects/matal/gallery-12.webp",
+  "engineering-design": "/images/projects/tholal/gallery-10.webp",
+  "project-management": "/images/projects/al-hamra-waterfront/gallery-04.webp",
+  "site-supervision": "/images/projects/matal/gallery-10.webp",
+};
 
 /** The column that rests open on desktop when nothing is locked or hovered. */
 const DEFAULT_ID = "site-supervision";
 
-export default function ServicesTabs() {
+export default function ServicesTabs({
+  services,
+}: {
+  services: Dictionary["services"];
+}) {
   // Section root for the shared reveal engine.
   const root = useRef<HTMLElement>(null);
   useReveals(root);
@@ -104,7 +102,7 @@ export default function ServicesTabs() {
       if (!panel) return;
       gsap.from(Array.from(panel.children), {
         autoAlpha: 0,
-        x: 24,
+        x: 24 * directionSign(),
         duration: DUR.base,
         ease: EASE.out,
         stagger: 0.08,
@@ -135,13 +133,13 @@ export default function ServicesTabs() {
               onMouseEnter={() => setHoveredId(service.id)}
               onClick={() => handleColumnClick(service.id)}
               className={`
-                relative border-l border-gray-200 cursor-pointer
+                relative border-s border-gray-200 cursor-pointer
                 transition-all duration-500 ease-out overflow-hidden
                 ${isExpanded ? "flex-[4]" : "flex-[1]"}
               `}
             >
-              {/* +/− Icon - Top Right. Black once locked, gray while previewing. */}
-              <div className="absolute top-6 right-6 z-10">
+              {/* +/− Icon - trailing top corner. Black once locked, gray while previewing. */}
+              <div className="absolute top-6 end-6 z-10">
                 <span
                   className={`text-2xl font-light transition-colors duration-300 ${
                     isLocked ? "text-black" : "text-gray-400"
@@ -162,7 +160,7 @@ export default function ServicesTabs() {
                       transform: "rotate(180deg)",
                     }}
                   >
-                    {service.label}
+                    {service.name}
                   </h3>
                 </div>
 
@@ -170,13 +168,13 @@ export default function ServicesTabs() {
                 {isExpanded && (
                   <div
                     data-panel-content
-                    className="flex flex-1 gap-8 p-6 pr-12 pt-12"
+                    className="flex flex-1 gap-8 p-6 pe-12 pt-12"
                   >
                     {/* Image */}
                     <div className="w-1/2 h-full relative">
                       <Image
-                        src={service.image}
-                        alt={service.label}
+                        src={SERVICE_IMAGES[service.id]}
+                        alt={service.name}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, 33vw"
@@ -213,7 +211,7 @@ export default function ServicesTabs() {
                 aria-expanded={isExpanded}
                 className="w-full flex items-center justify-between py-6 px-(--section-padding-x)"
               >
-                <h3>{service.label}</h3>
+                <h3 className="text-start">{service.name}</h3>
                 <span className="text-2xl font-light text-gray-400">
                   {isExpanded ? "−" : "+"}
                 </span>
@@ -233,8 +231,8 @@ export default function ServicesTabs() {
                   <div className="px-(--section-padding-x) pb-6 space-y-4">
                     <div className="relative w-full h-48">
                       <Image
-                        src={service.image}
-                        alt={service.label}
+                        src={SERVICE_IMAGES[service.id]}
+                        alt={service.name}
                         fill
                         className="object-cover"
                         sizes="100vw"

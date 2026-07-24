@@ -22,25 +22,16 @@
 
 import { useRef } from "react";
 import { useReveals } from "@/lib/gsap/reveals";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-const features = [
-  {
-    id: 1,
-    title: "Architectural Design",
-    description:
-      "Comprehensive architectural solutions that balance form, function, and identity, transforming concepts into refined, buildable spaces.",
-    image: "/images/feature-1.png",
-  },
-  {
-    id: 2,
-    title: "Engineering Excellence",
-    description:
-      "Integrated engineering services across structural, mechanical, electrical, and plumbing disciplines to ensure safe and sustainable performance.",
-    image: "/images/feature-2.png",
-  },
-];
+/** Card imagery, paired with dict.hidden.featureCards BY INDEX. */
+const IMAGES = ["/images/feature-1.png", "/images/feature-2.png"];
 
-export default function FeatureCards() {
+export default function FeatureCards({
+  cards,
+}: {
+  cards: Dictionary["hidden"]["featureCards"];
+}) {
   const root = useRef<HTMLElement>(null);
   useReveals(root);
 
@@ -48,9 +39,9 @@ export default function FeatureCards() {
     <section ref={root} className="section bg-white">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {features.map((feature) => (
+          {cards.map((card, index) => (
             <div
-              key={feature.id}
+              key={IMAGES[index]}
               data-img-reveal
               className="group relative overflow-hidden aspect-[4/3] cursor-pointer"
             >
@@ -62,7 +53,7 @@ export default function FeatureCards() {
                   transition-transform duration-700 ease-out
                   group-hover:scale-105
                 "
-                style={{ backgroundImage: `url(${feature.image})` }}
+                style={{ backgroundImage: `url(${IMAGES[index]})` }}
               />
 
               {/* Dark Overlay */}
@@ -71,10 +62,10 @@ export default function FeatureCards() {
               {/* Content */}
               <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
                 <h3 className="text-white mb-4">
-                  {feature.title}
+                  {card.title}
                 </h3>
                 <p className="text-white/80 text-base md:text-lg max-w-sm">
-                  {feature.description}
+                  {card.description}
                 </p>
               </div>
             </div>

@@ -3,55 +3,79 @@
  * ===================
  * Portfolio listing for VADO's architecture work. Server component only:
  * a single H1, a short intro, and a responsive grid of project cards that
- * link through to each detail page at /projects/[slug]. Minimalist layout,
- * generous whitespace, matching the site's calm editorial aesthetic.
+ * link through to each detail page at /[lang]/projects/[slug]. Minimalist
+ * layout, generous whitespace, matching the site's calm editorial aesthetic.
  */
 
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { buildAlternates } from "@/lib/seo";
+import { LOCALES, isLocale, localePath } from "@/lib/i18n/config";
+import { getDictionary, t } from "@/lib/i18n/get-dictionary";
 import { getAllProjects } from "@/lib/projects";
 
-// Static metadata for SEO. The root layout template appends "| VADO",
-// so the title here stays bare.
-export const metadata: Metadata = {
-  title: "Architecture Projects in Saudi Arabia",
-  description:
-    "Explore VADO's architecture projects in Saudi Arabia: master plans, waterfront developments, commercial boulevards, and private villas across the Eastern Province.",
-  alternates: {
-    canonical: "/projects",
-  },
-};
+const PATH = "/projects";
 
-export default function ProjectsIndexPage() {
-  const projects = getAllProjects();
+export function generateStaticParams() {
+  return LOCALES.map((lang) => ({ lang }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+
+  const dict = getDictionary(lang);
+
+  return {
+    title: dict.pages.projects.metaTitle,
+    description: dict.pages.projects.metaDescription,
+    alternates: buildAlternates(lang, PATH),
+  };
+}
+
+export default async function ProjectsIndexPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+
+  const dict = getDictionary(lang);
+  const copy = dict.pages.projects;
+  const projects = getAllProjects(lang);
 
   return (
     <>
-      <Header forceSolid />
+      <Header
+        lang={lang}
+        nav={dict.nav}
+        langSwitcher={dict.langSwitcher}
+        forceSolid
+      />
 
-      <main className="pt-24">
+      <main id="main" className="pt-24">
         {/* Intro */}
         <section className="section">
           <div className="container">
             <span className="text-sm tracking-widest uppercase text-gray-500">
-              Selected Work
+              {copy.kicker}
             </span>
 
-            <h1 className="mt-6 max-w-3xl">
-              Architecture projects in Saudi Arabia
-            </h1>
+            <h1 className="mt-6 max-w-3xl">{copy.heading}</h1>
 
             <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
-              A selection of VADO&apos;s architecture and engineering work across
-              the Eastern Province, spanning waterfront master plans, mixed-use
-              destinations, commercial boulevards, and private residences. Each
-              project reflects a considered balance of place, function, and
-              enduring design.
+              {copy.intro}
             </p>
           </div>
         </section>
@@ -63,14 +87,18 @@ export default function ProjectsIndexPage() {
               {projects.map((project) => (
                 <Link
                   key={project.slug}
-                  href={`/projects/${project.slug}`}
+                  href={localePath(lang, `/projects/${project.slug}`)}
                   className="group block"
                 >
                   {/* Image */}
                   <div className="image-hover-scale relative aspect-[4/3] overflow-hidden">
                     <Image
                       src={project.heroImage}
-                      alt={`${project.title}, a ${project.category.toLowerCase()} project by VADO in ${project.location}`}
+                      alt={t(copy.cardAlt, {
+                        title: project.title,
+                        category: project.category.toLowerCase(),
+                        location: project.location,
+                      })}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"
@@ -99,23 +127,20 @@ export default function ProjectsIndexPage() {
         <section className="border-t border-gray-200">
           <div className="container">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 py-12 md:py-16">
-              <p className="text-lg text-gray-600 max-w-xl">
-                Have a project in mind? We would be glad to discuss how VADO can
-                bring it to life.
-              </p>
+              <p className="text-lg text-gray-600 max-w-xl">{copy.ctaBody}</p>
               <Link
-                href="/#contact"
+                href={`${localePath(lang, "/")}#contact`}
                 className="group inline-flex items-center gap-2 text-sm tracking-widest uppercase text-black underline-hover"
               >
-                Start a conversation
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                {copy.ctaLink}
+                <ArrowRight className="w-4 h-4 rtl:rotate-180 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
               </Link>
             </div>
           </div>
         </section>
       </main>
 
-      <Footer />
+      <Footer lang={lang} footer={dict.footer} nav={dict.nav} />
     </>
   );
 }

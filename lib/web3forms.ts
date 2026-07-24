@@ -4,7 +4,13 @@
  * One shared client-side submit for every VADO form (client enquiry, careers,
  * suppliers). All submissions post to Web3Forms with the single public access
  * key and land in the same inbox (info@vado.sa); the `subject` is what
- * distinguishes them once they arrive.
+ * distinguishes them once they arrive, including which language edition the
+ * visitor was reading.
+ *
+ * Failure messages are passed IN rather than hardcoded here, because this
+ * module is language-neutral: the caller supplies the strings from whichever
+ * dictionary is active. Web3Forms' own `data.message` is English-only, so it is
+ * used as a diagnostic fallback only when the caller has nothing better.
  *
  * The access key is a public client-side key by design, so exposing it in the
  * browser bundle is expected.
@@ -15,9 +21,18 @@ export interface Web3FormsResult {
   message: string;
 }
 
+/** Localized copy for the two ways a submit can fail. */
+export interface Web3FormsMessages {
+  /** The service accepted the request but rejected the submission. */
+  genericError: string;
+  /** The request never reached the service (offline, blocked, timeout). */
+  networkError: string;
+}
+
 export async function submitToWeb3Forms(
   form: HTMLFormElement,
-  subject: string
+  subject: string,
+  messages: Web3FormsMessages
 ): Promise<Web3FormsResult> {
   // Serialize the form synchronously (this also captures the hidden botcheck
   // honeypot) before any await, so the element reference stays valid.
@@ -41,12 +56,12 @@ export async function submitToWeb3Forms(
     }
     return {
       success: false,
-      message: data.message || "Something went wrong. Please try again.",
+      message: messages.genericError,
     };
   } catch {
     return {
       success: false,
-      message: "Couldn't reach the mail service. Please try again.",
+      message: messages.networkError,
     };
   }
 }
