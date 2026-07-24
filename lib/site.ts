@@ -15,8 +15,14 @@
 /** Public production URL. Update here if a custom domain is added later. */
 export const SITE_URL = "https://vado.sa";
 
-/** The wordmark. Latin in both editions, matching the logo. */
-export const SITE_NAME = "VADO";
+/*
+ * NOTE: there is deliberately no SITE_NAME here.
+ *
+ * The wordmark is TRANSLATED ("VADO" / "فادو"), so it lives in the dictionaries
+ * as `brand.shortName` and nowhere else. An earlier `SITE_NAME = "VADO"` in this
+ * file competed with that as a second source of truth, and the footer wordmark
+ * silently rendered English on every Arabic page as a result. One name, one home.
+ */
 
 export const FOUNDING_YEAR = "1994";
 

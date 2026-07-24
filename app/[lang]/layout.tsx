@@ -11,7 +11,7 @@ import SmoothScroll from "@/components/providers/SmoothScroll";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import JsonLd from "@/components/seo/JsonLd";
 import { siteGraph } from "@/lib/schema";
-import { SITE_URL, SITE_NAME, OG_IMAGE } from "@/lib/site";
+import { SITE_URL, OG_IMAGE } from "@/lib/site";
 import { buildAlternates } from "@/lib/seo";
 import {
   LOCALES,
@@ -110,7 +110,7 @@ export async function generateMetadata({
       template: dict.meta.titleTemplate,
     },
     description: dict.meta.description,
-    applicationName: SITE_NAME,
+    applicationName: dict.brand.shortName,
     keywords: dict.meta.keywords,
     authors: [{ name: dict.brand.legalName }],
     creator: dict.brand.legalName,
@@ -120,7 +120,7 @@ export async function generateMetadata({
     alternates,
     openGraph: {
       type: "website",
-      siteName: SITE_NAME,
+      siteName: dict.brand.shortName,
       title: dict.meta.siteTitle,
       description: dict.meta.description,
       url: alternates.canonical,

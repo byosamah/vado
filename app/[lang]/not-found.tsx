@@ -24,6 +24,7 @@ export default function NotFound() {
         nav: dict.nav,
         langSwitcher: dict.langSwitcher,
         footer: dict.footer,
+        brandName: dict.brand.shortName,
         title: dict.pages.project.notFoundTitle,
         homeLabel: dict.pages.project.breadcrumbHome,
       };

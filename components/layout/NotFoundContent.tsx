@@ -38,6 +38,8 @@ export interface NotFoundEdition {
   nav: Dictionary["nav"];
   langSwitcher: Dictionary["langSwitcher"];
   footer: Dictionary["footer"];
+  /** The wordmark in this locale, for the footer. */
+  brandName: string;
   title: string;
   homeLabel: string;
 }
@@ -81,7 +83,12 @@ export default function NotFoundContent({
         </section>
       </main>
 
-      <Footer lang={lang} footer={copy.footer} nav={copy.nav} />
+      <Footer
+        lang={lang}
+        brandName={copy.brandName}
+        footer={copy.footer}
+        nav={copy.nav}
+      />
     </>
   );
 }

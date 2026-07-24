@@ -21,7 +21,6 @@
 
 import {
   SITE_URL,
-  SITE_NAME,
   FOUNDING_YEAR,
   CONTACT_EMAIL,
   CONTACT_PHONE,
@@ -259,6 +258,3 @@ export function projectGraph(
     ],
   };
 }
-
-/** Kept for callers that only need the site name, e.g. OpenGraph siteName. */
-export { SITE_NAME };

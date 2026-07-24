@@ -21,7 +21,6 @@ import ProjectGallery from "@/components/sections/ProjectGallery";
 import JsonLd from "@/components/seo/JsonLd";
 import { projectGraph } from "@/lib/schema";
 import { buildAlternates } from "@/lib/seo";
-import { SITE_NAME } from "@/lib/site";
 import { LOCALES, OG_LOCALES, isLocale, localePath } from "@/lib/i18n/config";
 import { getDictionary, t } from "@/lib/i18n/get-dictionary";
 import {
@@ -49,7 +48,7 @@ export async function generateMetadata({
   const project = getProjectBySlug(slug, lang);
 
   if (!project) {
-    // Bare title; the root layout template appends "| VADO".
+    // Bare title; the root layout template appends the localized wordmark.
     return { title: dict.pages.project.notFoundTitle };
   }
 
@@ -69,8 +68,8 @@ export async function generateMetadata({
     alternates,
     openGraph: {
       type: "article",
-      siteName: SITE_NAME,
-      title: `${project.title} | ${SITE_NAME}`,
+      siteName: dict.brand.shortName,
+      title: `${project.title} | ${dict.brand.shortName}`,
       description: metaDescription,
       url: alternates.canonical,
       locale: OG_LOCALES[lang],
@@ -78,7 +77,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${project.title} | ${SITE_NAME}`,
+      title: `${project.title} | ${dict.brand.shortName}`,
       description: metaDescription,
       images: [project.heroImage],
     },
@@ -249,7 +248,12 @@ export default async function ProjectPage({
         </div>
       </main>
 
-      <Footer lang={lang} footer={dict.footer} nav={dict.nav} />
+      <Footer
+        lang={lang}
+        brandName={dict.brand.shortName}
+        footer={dict.footer}
+        nav={dict.nav}
+      />
     </>
   );
 }

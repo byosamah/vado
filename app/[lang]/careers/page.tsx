@@ -172,7 +172,12 @@ export default async function CareersPage({
         </section>
       </main>
 
-      <Footer lang={lang} footer={dict.footer} nav={dict.nav} />
+      <Footer
+        lang={lang}
+        brandName={dict.brand.shortName}
+        footer={dict.footer}
+        nav={dict.nav}
+      />
     </>
   );
 }
