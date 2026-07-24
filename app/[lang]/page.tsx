@@ -2,23 +2,24 @@
  * VADO Homepage
  * =============
  * VISION Arch. & Engineering Consultants
- * Based on Hiroshi design with VADO content
+ *
+ * A SERVER component: it resolves the locale, loads the dictionary once, and
+ * hands each section only the slice it needs. Keeping the dictionary on the
+ * server is what stops both languages' copy from being shipped to the browser.
  *
  * Sections:
  * 1. Hero Slider (fullscreen)
  * 2. About Section
- * 3. Services Links
- * 4. Feature Cards
- * 5. Portfolio Showcase
- * 6. Services Tabs
- * 7. Quote Block
- * 8. Team Grid
- * 9. Guiding Principles
- * 10. Blog Grid
- * 11. Contact Section (NEW)
- * 12. CTA Banner
- * 13. Footer
+ * 3. Portfolio Showcase
+ * 4. Services Tabs
+ * 5. Quote Block
+ * 6. Team Grid
+ * 7. Guiding Principles
+ * 8. Contact Section
+ * 9. CTA Banner
  */
+
+import { notFound } from "next/navigation";
 
 // Layout Components
 import Header from "@/components/layout/Header";
@@ -42,66 +43,98 @@ import GuidingPrinciples from "@/components/sections/GuidingPrinciples";
 import ContactSection from "@/components/sections/ContactSection";
 import CTABanner from "@/components/sections/CTABanner";
 
-export default function Home() {
+import { LOCALES, isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getAllProjects } from "@/lib/projects";
+
+export function generateStaticParams() {
+  return LOCALES.map((lang) => ({ lang }));
+}
+
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+
+  const dict = getDictionary(lang);
+  const projects = getAllProjects(lang);
+
   return (
     <>
       {/* FAQ structured data (additive, invisible) — does not alter section order */}
-      <JsonLd data={faqSchema()} />
+      <JsonLd data={faqSchema(lang, dict)} />
 
       {/* Sticky Header - Transparent on hero, solid on scroll */}
-      <Header />
+      <Header lang={lang} nav={dict.nav} langSwitcher={dict.langSwitcher} />
 
-      <main>
+      <main id="main">
         {/* Primary page heading for SEO. Visually hidden (the hero is an image
             slider with cycling h2 titles), but present as the single semantic H1
             carrying the primary keyword. */}
-        <h1 className="sr-only">
-          VADO: Architecture and Engineering Consultants in Al Khobar, Saudi Arabia
-        </h1>
+        <h1 className="sr-only">{dict.home.srHeading}</h1>
 
         {/* Hero - Fullscreen slider with fade effect */}
-        <HeroSlider />
+        <HeroSlider lang={lang} hero={dict.home.hero} projects={projects} />
 
         {/* About - Two column layout with text and image */}
-        <AboutSection />
+        <AboutSection about={dict.home.about} />
 
         {/* Services Links - TEMPORARILY HIDDEN
-        <ServicesLinks />
+        <ServicesLinks links={dict.hidden.servicesLinks} />
         */}
 
         {/* Feature Cards - TEMPORARILY HIDDEN
-        <FeatureCards />
+        <FeatureCards cards={dict.hidden.featureCards} />
         */}
 
         {/* Portfolio - Interactive sidebar with Swiper carousel */}
-        <PortfolioShowcase />
+        <PortfolioShowcase
+          lang={lang}
+          portfolio={dict.home.portfolio}
+          projects={projects}
+        />
 
         {/* Services Tabs - Tabbed content section */}
-        <ServicesTabs />
+        <ServicesTabs services={dict.services} />
 
         {/* Quote - Large typography centered quote */}
-        <QuoteBlock />
+        <QuoteBlock quote={dict.home.quote} />
 
-        {/* Team - Four column grid of team members */}
-        <TeamGrid />
+        {/* Team - Grid of leadership */}
+        <TeamGrid team={dict.team} copy={dict.home.team} />
 
         {/* Guiding Principles - Dark background values band */}
-        <GuidingPrinciples />
+        <GuidingPrinciples
+          principles={dict.principles}
+          copy={dict.home.principles}
+        />
 
-        {/* Blog - Four column grid of blog posts */}
-        {/* TEMPORARILY HIDDEN - Uncomment to restore:
-        <BlogGrid />
+        {/* Blog - TEMPORARILY HIDDEN - Uncomment to restore:
+        <BlogGrid blog={dict.hidden.blog} />
         */}
 
         {/* Contact - Form and contact information */}
-        <ContactSection />
+        <ContactSection
+          lang={lang}
+          contact={dict.home.contact}
+          forms={dict.forms}
+          subject={dict.enquirySubject}
+        />
 
         {/* CTA - Full-width banner with parallax background */}
-        <CTABanner />
+        <CTABanner cta={dict.home.cta} />
       </main>
 
       {/* Footer - Simple credits and social links */}
-      <Footer />
+      <Footer
+        lang={lang}
+        brandName={dict.brand.shortName}
+        footer={dict.footer}
+        nav={dict.nav}
+      />
     </>
   );
 }

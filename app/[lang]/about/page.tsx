@@ -3,96 +3,75 @@
  * ==========
  * The firm's story, told as a calm editorial page. Server component only:
  * no client hooks, no GSAP, no Swiper. Every fact here is drawn from the
- * repo's own source of truth (lib/site.ts) and the homepage section copy
- * (AboutSection, GuidingPrinciples, TeamGrid). Nothing is invented.
+ * repo's own source of truth (lib/site.ts and the dictionaries), and the
+ * principles, services, and leadership lists are the SAME dictionary arrays
+ * the homepage renders, so the two surfaces cannot drift apart.
  */
 
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import JsonLd from "@/components/seo/JsonLd";
-import { organizationSchema } from "@/lib/schema";
-import {
-  SITE_URL,
-  SITE_DESCRIPTION,
-  FOUNDING_YEAR,
-  ADDRESS,
-  SERVICES,
-} from "@/lib/site";
+import { aboutSchema } from "@/lib/schema";
+import { buildAlternates } from "@/lib/seo";
+import { FOUNDING_YEAR } from "@/lib/site";
+import { LOCALES, isLocale, localePath } from "@/lib/i18n/config";
+import { getDictionary, t } from "@/lib/i18n/get-dictionary";
 
-// Static metadata: the root layout template appends " | VADO", so the title
-// intentionally omits it. Description sits near ~150 characters for clean
-// snippets, and the canonical points at this page's own path.
-export const metadata: Metadata = {
-  title: "About Our Architecture and Engineering Consultancy in Al Khobar",
-  description:
-    "VADO is a multidisciplinary architecture and engineering consultancy in Al Khobar, Saudi Arabia, established in 1994 by VISION Arch. & Engineering Consultants.",
-  alternates: {
-    canonical: "/about",
-  },
-};
+const PATH = "/about";
 
-// Guiding principles, mirrored verbatim from GuidingPrinciples.tsx so the two
-// surfaces never drift apart.
-const principles = [
-  {
-    id: "01",
-    title: "Innovation",
-    description:
-      "We turn vision into architecture, pursuing creative, forward-thinking design that answers to context and purpose.",
-  },
-  {
-    id: "02",
-    title: "Sustainability",
-    description:
-      "We design responsibly, shaping functional environments built to serve communities and endure for generations.",
-  },
-  {
-    id: "03",
-    title: "Precision",
-    description:
-      "We hold to engineering rigor and disciplined execution, from the first concept to the final detail on site.",
-  },
-];
+/** Portraits, in the same order as `dict.team`. */
+const PORTRAITS = ["/images/team-khalid.webp", "/images/team-mutaz.webp"];
 
-// Leadership, names and roles only, mirrored from TeamGrid.tsx. No bios are
-// invented for either person.
-const leadership = [
-  {
-    name: "Arch. Khalid Al Mulla",
-    role: "President",
-    image: "/images/team-khalid.webp",
-  },
-  {
-    name: "Arch. Mutaz Al Mulla",
-    role: "Vice President & Chief Architect",
-    image: "/images/team-mutaz.webp",
-  },
-];
+export function generateStaticParams() {
+  return LOCALES.map((lang) => ({ lang }));
+}
 
-// AboutPage structured data, built on the code-authored organization node so
-// the facts stay truthful and in sync with the rest of the site.
-const aboutSchema = {
-  "@context": "https://schema.org",
-  "@type": "AboutPage",
-  name: "About VADO",
-  url: `${SITE_URL}/about`,
-  description: SITE_DESCRIPTION,
-  mainEntity: organizationSchema(),
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
 
-export default function AboutPage() {
+  const dict = getDictionary(lang);
+
+  return {
+    title: dict.pages.about.metaTitle,
+    description: dict.pages.about.metaDescription,
+    alternates: buildAlternates(lang, PATH),
+  };
+}
+
+export default async function AboutPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+
+  const dict = getDictionary(lang);
+  const copy = dict.pages.about;
+
   return (
     <>
-      <JsonLd data={aboutSchema} />
+      <JsonLd data={aboutSchema(lang, dict)} />
 
-      <Header forceSolid />
+      <Header
+        lang={lang}
+        nav={dict.nav}
+        langSwitcher={dict.langSwitcher}
+        forceSolid
+      />
 
-      <main className="pt-24">
+      <main id="main" className="pt-24">
         {/* Intro */}
         <section className="section">
           <div className="container">
@@ -101,25 +80,19 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-2 h-2 bg-black rounded-full" />
                 <span className="text-sm tracking-widest uppercase text-gray-600">
-                  About VADO
+                  {copy.kicker}
                 </span>
               </div>
 
               {/* Primary headline (the only h1 on the page) */}
-              <h1>
-                An architecture and engineering consultancy in Al Khobar, Saudi
-                Arabia.
-              </h1>
+              <h1>{copy.heading}</h1>
 
               {/* Who VADO is */}
               <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
-                VADO (VISION Arch. & Engineering Consultants) is a
-                multidisciplinary consultancy specialized in architecture,
-                engineering, and project development. Established in{" "}
-                {FOUNDING_YEAR} and based in {ADDRESS.city}, the practice
-                delivers innovative, functional, and sustainable solutions
-                tailored to the evolving needs of communities and clients across
-                Saudi Arabia.
+                {t(copy.intro, {
+                  year: FOUNDING_YEAR,
+                  city: dict.brand.city,
+                })}
               </p>
             </div>
           </div>
@@ -129,7 +102,7 @@ export default function AboutPage() {
         <div className="relative w-full h-[50vh] md:h-[60vh]">
           <Image
             src="/images/projects/al-hamra-waterfront/hero.webp"
-            alt="Al Hamra Waterfront masterplan by VADO on the Arabian Gulf"
+            alt={copy.bandImageAlt}
             fill
             className="object-cover"
             sizes="100vw"
@@ -143,27 +116,23 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-2 h-2 bg-black rounded-full" />
                 <span className="text-sm tracking-widest uppercase text-gray-600">
-                  What we do
+                  {copy.whatWeDoKicker}
                 </span>
               </div>
-              <h2>From first concept to final detail</h2>
+              <h2>{copy.whatWeDoHeading}</h2>
               <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
-                Our work spans urban, landscape, cultural, retail, hospitality,
-                and residential projects across the Kingdom, delivered through
-                four integrated disciplines.
+                {copy.whatWeDoBody}
               </p>
             </div>
 
             {/* Services grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
-              {SERVICES.map((service, index) => (
-                <div key={service.name} className="pt-8 border-t border-gray-200">
+              {dict.services.map((service, index) => (
+                <div key={service.id} className="pt-8 border-t border-gray-200">
                   <span className="block text-sm tracking-widest text-gray-400 mb-6">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="mb-4">
-                    {service.name}
-                  </h3>
+                  <h3 className="mb-4">{service.name}</h3>
                   <p className="text-base leading-relaxed text-gray-600">
                     {service.description}
                   </p>
@@ -179,22 +148,20 @@ export default function AboutPage() {
             <div className="flex items-center gap-3 mb-16">
               <span className="w-2 h-2 bg-black rounded-full" />
               <span className="text-sm tracking-widest uppercase text-gray-600">
-                What guides us
+                {copy.principlesKicker}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
-              {principles.map((principle) => (
+              {dict.principles.map((principle) => (
                 <div
                   key={principle.id}
-                  className="md:px-8 md:border-l md:border-gray-200 md:first:border-l-0 md:first:pl-0"
+                  className="md:px-8 md:border-s md:border-gray-200 md:first:border-s-0 md:first:ps-0"
                 >
                   <span className="block text-sm tracking-widest text-gray-400 mb-6">
                     {principle.id}
                   </span>
-                  <h3 className="mb-4">
-                    {principle.title}
-                  </h3>
+                  <h3 className="mb-4">{principle.title}</h3>
                   <p className="text-base leading-relaxed text-gray-600 max-w-xs">
                     {principle.description}
                   </p>
@@ -211,19 +178,22 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-2 h-2 bg-black rounded-full" />
                 <span className="text-sm tracking-widest uppercase text-gray-600">
-                  Leadership
+                  {copy.leadershipKicker}
                 </span>
               </div>
-              <h2>Meet our people</h2>
+              <h2>{copy.leadershipHeading}</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl">
-              {leadership.map((member) => (
-                <div key={member.name} className="group">
+              {dict.team.map((member, index) => (
+                <div key={PORTRAITS[index]} className="group">
                   <div className="relative overflow-hidden mb-6 aspect-[3/4]">
                     <Image
-                      src={member.image}
-                      alt={`${member.name}, ${member.role} at VADO`}
+                      src={PORTRAITS[index]}
+                      alt={t(dict.home.team.memberAlt, {
+                        name: member.name,
+                        role: member.role,
+                      })}
                       fill
                       sizes="(max-width: 640px) 100vw, 320px"
                       className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ease-out group-hover:scale-105"
@@ -241,24 +211,28 @@ export default function AboutPage() {
         <section className="section bg-gray-900">
           <div className="container">
             <div className="max-w-2xl">
-              <h2 className="text-white">Have a project in mind?</h2>
+              <h2 className="text-white">{copy.ctaHeading}</h2>
               <p className="text-lg leading-relaxed text-white/60 mt-6">
-                Tell us about your vision and we will help you shape it into
-                architecture.
+                {copy.ctaBody}
               </p>
               <Link
-                href="/#contact"
+                href={`${localePath(lang, "/")}#contact`}
                 className="inline-flex items-center gap-3 mt-10 text-sm tracking-widest uppercase text-white underline-hover"
               >
-                Get in touch
-                <ArrowRight className="w-4 h-4" />
+                {copy.ctaLink}
+                <ArrowRight className="w-4 h-4 rtl:rotate-180" />
               </Link>
             </div>
           </div>
         </section>
       </main>
 
-      <Footer />
+      <Footer
+        lang={lang}
+        brandName={dict.brand.shortName}
+        footer={dict.footer}
+        nav={dict.nav}
+      />
     </>
   );
 }

@@ -43,4 +43,25 @@ export const prefersReducedMotion = (): boolean =>
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/**
+ * True when the document reads right to left.
+ *
+ * Read off the live DOM rather than passed down as a prop, because motion is a
+ * client-side concern and <html dir> is already the single source of truth the
+ * locale layout sets. Guarded for SSR.
+ */
+export const isDocumentRtl = (): boolean =>
+  typeof document !== "undefined" &&
+  document.documentElement.getAttribute("dir") === "rtl";
+
+/**
+ * Sign multiplier for horizontal motion: +1 in LTR, -1 in RTL.
+ *
+ * Any animation that slides content in "from the left" means "from the side
+ * the reader starts on". Multiplying the x offset by this keeps that intent
+ * intact when the page mirrors, instead of having content fly in from the
+ * wrong edge.
+ */
+export const directionSign = (): number => (isDocumentRtl() ? -1 : 1);
+
 export { gsap, ScrollTrigger, SplitText, useGSAP };

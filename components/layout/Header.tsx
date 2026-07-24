@@ -8,33 +8,63 @@
  * Behavior:
  * - Transparent background when at top of page
  * - Solid white background after scrolling 100px
- * - Logo on left, navigation on right
+ * - Logo on the start side, navigation on the end side
  * - Smooth 300ms transition
+ *
+ * Navigation targets the homepage's in-page sections. On the homepage itself
+ * those stay bare hashes so Lenis keeps handling them as smooth scrolls; from
+ * any subpage they become full locale-prefixed links, so "Team" works from
+ * /en/about instead of being a dead anchor (which it used to be).
  */
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-
-// Navigation items for VADO site
-const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#portfolio" },
-  { label: "Services", href: "#services" },
-  { label: "Team", href: "#team" },
-  { label: "Contact", href: "#contact" },
-];
+import LanguageSwitcher from "./LanguageSwitcher";
+import {
+  LOGOS,
+  LOGO_SIZE_CLASSES,
+  localePath,
+  stripLocale,
+  type Locale,
+} from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 interface HeaderProps {
+  lang: Locale;
+  nav: Dictionary["nav"];
+  langSwitcher: Dictionary["langSwitcher"];
   forceSolid?: boolean; // Force solid background (for pages without dark hero)
 }
 
-export default function Header({ forceSolid = false }: HeaderProps) {
+export default function Header({
+  lang,
+  nav,
+  langSwitcher,
+  forceSolid = false,
+}: HeaderProps) {
   // Track scroll position to determine header background
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Track mobile menu open state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const pathname = usePathname();
+  const onHomepage = stripLocale(pathname ?? "/") === "/";
+
+  // Section anchors live on the homepage. Bare hash while already there (Lenis
+  // smooth-scrolls it); otherwise a real link back to the homepage section.
+  const sectionHref = (hash: string) =>
+    onHomepage ? `#${hash}` : `${localePath(lang, "/")}#${hash}`;
+
+  const navItems = [
+    { label: nav.about, href: sectionHref("about") },
+    { label: nav.projects, href: sectionHref("portfolio") },
+    { label: nav.services, href: sectionHref("services") },
+    { label: nav.team, href: sectionHref("team") },
+    { label: nav.contact, href: sectionHref("contact") },
+  ];
 
   useEffect(() => {
     // Function to check scroll position
@@ -91,12 +121,19 @@ export default function Header({ forceSolid = false }: HeaderProps) {
       <div className="container">
         <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
-          <Link href="/" className="flex items-center min-h-11">
+          <Link href={localePath(lang, "/")} className="flex items-center min-h-11">
+            {/* Locale wordmark. Sized by WIDTH (see LOGO_SIZE_CLASSES): the two
+                files share one coordinate space, so equal widths keep the
+                V-mark at an identical scale, while equal heights would shrink
+                the Arabic one. Both files use the same #582f37, and the
+                brightness-0 invert below flattens either to white on a dark
+                header, so the colour behaviour is identical in both editions. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.svg"
-              alt="VADO Consultants"
+              src={LOGOS[lang]}
+              alt={nav.logoAlt}
               className={`
-                h-8 md:h-10 w-auto
+                ${LOGO_SIZE_CLASSES}
                 transition-all duration-300
                 ${isMobileMenuOpen || (!forceSolid && !isScrolled) ? "brightness-0 invert" : ""}
               `}
@@ -119,17 +156,31 @@ export default function Header({ forceSolid = false }: HeaderProps) {
                 <span className="underline-hover">{item.label}</span>
               </Link>
             ))}
+
+            {/* Language switcher, separated from the nav by a hairline so it
+                reads as a mode control rather than another destination. */}
+            <LanguageSwitcher
+              lang={lang}
+              label={langSwitcher.label}
+              className={`
+                ps-8 border-s
+                ${(forceSolid || isScrolled)
+                  ? "text-gray-800 border-gray-200"
+                  : "text-white border-white/30"
+                }
+              `}
+            />
           </nav>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`
-              md:hidden flex items-center justify-center min-w-11 min-h-11 -mr-1
+              md:hidden flex items-center justify-center min-w-11 min-h-11 -me-1
               transition-colors duration-300
               ${isMobileMenuOpen || (!forceSolid && !isScrolled) ? "text-white" : "text-black"}
             `}
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label={isMobileMenuOpen ? nav.closeMenu : nav.openMenu}
             aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
@@ -165,6 +216,19 @@ export default function Header({ forceSolid = false }: HeaderProps) {
               {item.label}
             </Link>
           ))}
+
+          {/* Language switcher sits below a divider, matching the desktop
+              treatment: a mode control, not a sixth destination. */}
+          <div
+            className="mt-6 pt-6 w-full flex justify-center border-t border-white/15"
+            onClick={handleNavClick}
+          >
+            <LanguageSwitcher
+              lang={lang}
+              label={langSwitcher.label}
+              className="text-lg text-white"
+            />
+          </div>
         </nav>
       </div>
     </header>

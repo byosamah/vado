@@ -7,22 +7,29 @@
  * machine-readable description of the firm, its services, and its projects,
  * which raises the odds of being cited accurately.
  *
- * Everything here is grounded in real site content (see lib/site.ts and
- * lib/projects.ts). No fabricated ratings, awards, or authors.
+ * Every builder takes a locale and its dictionary, so the Arabic edition emits
+ * Arabic names and descriptions rather than repeating the English graph.
+ *
+ * Entity @ids stay locale-INDEPENDENT on purpose. The firm is one organization
+ * described in two languages, not two organizations, so both editions point at
+ * `${SITE_URL}/#organization`. `inLanguage` on the page-level nodes is what
+ * tells a crawler which edition it is reading.
+ *
+ * Everything here is grounded in real site content (lib/site.ts,
+ * lib/projects.ts, and the dictionaries). No fabricated ratings or awards.
  */
 
 import {
   SITE_URL,
-  SITE_NAME,
-  LEGAL_NAME,
   FOUNDING_YEAR,
   CONTACT_EMAIL,
   CONTACT_PHONE,
-  ADDRESS,
+  COUNTRY_CODE,
   OG_IMAGE,
-  SITE_DESCRIPTION,
-  SERVICES,
 } from "@/lib/site";
+import { absoluteUrl } from "@/lib/seo";
+import { LOCALES, LOGOS, type Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Project } from "@/lib/projects";
 
 /** Stable @id anchors so entities can cross-reference within a @graph. */
@@ -34,52 +41,46 @@ const WEBSITE_ID = `${SITE_URL}/#website`;
  * so it carries both entity signals (Organization) and local-business signals
  * (address, area served, contact channels).
  */
-export function organizationSchema() {
+export function organizationSchema(locale: Locale, dict: Dictionary) {
   return {
     "@type": ["Organization", "ProfessionalService"],
     "@id": ORG_ID,
-    name: SITE_NAME,
-    legalName: LEGAL_NAME,
-    alternateName: LEGAL_NAME,
-    url: SITE_URL,
-    logo: `${SITE_URL}/logo.svg`,
+    name: dict.brand.shortName,
+    legalName: dict.brand.legalName,
+    alternateName: dict.brand.legalName,
+    url: absoluteUrl(locale, "/"),
+    // The edition's own wordmark, so an Arabic knowledge panel shows the Arabic
+    // lockup rather than the Latin one.
+    logo: `${SITE_URL}${LOGOS[locale]}`,
     image: `${SITE_URL}${OG_IMAGE.url}`,
-    description: SITE_DESCRIPTION,
+    description: dict.meta.longDescription,
     foundingDate: FOUNDING_YEAR,
     email: CONTACT_EMAIL,
     telephone: CONTACT_PHONE,
     address: {
       "@type": "PostalAddress",
-      streetAddress: ADDRESS.street,
-      addressLocality: ADDRESS.city,
-      addressRegion: ADDRESS.region,
-      addressCountry: ADDRESS.countryCode,
+      streetAddress: dict.brand.street,
+      addressLocality: dict.brand.city,
+      addressRegion: dict.brand.region,
+      addressCountry: COUNTRY_CODE,
     },
     areaServed: {
       "@type": "Country",
-      name: ADDRESS.country,
+      name: dict.brand.country,
     },
-    knowsAbout: [
-      "Architecture",
-      "Engineering Consultancy",
-      "Urban Design",
-      "Landscape Architecture",
-      "Master Planning",
-      "Project Management",
-      "Site Supervision",
-    ],
+    knowsAbout: dict.services.map((service) => service.name),
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
       email: CONTACT_EMAIL,
       telephone: CONTACT_PHONE,
-      areaServed: ADDRESS.countryCode,
-      availableLanguage: ["en", "ar"],
+      areaServed: COUNTRY_CODE,
+      availableLanguage: [...LOCALES],
     },
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: "Architecture and Engineering Services",
-      itemListElement: SERVICES.map((service) => ({
+      name: dict.pages.services.heading,
+      itemListElement: dict.services.map((service) => ({
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
@@ -92,26 +93,26 @@ export function organizationSchema() {
 }
 
 /** The site as a WebSite entity, published by the organization above. */
-export function websiteSchema() {
+export function websiteSchema(locale: Locale, dict: Dictionary) {
   return {
     "@type": "WebSite",
     "@id": WEBSITE_ID,
-    url: SITE_URL,
-    name: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    inLanguage: "en",
+    url: absoluteUrl(locale, "/"),
+    name: dict.brand.shortName,
+    description: dict.meta.longDescription,
+    inLanguage: locale,
     publisher: { "@id": ORG_ID },
   };
 }
 
 /**
- * Site-wide graph rendered once in the root layout. Combines the firm and the
+ * Site-wide graph rendered once per locale layout. Combines the firm and the
  * website so crawlers resolve a single, cross-linked knowledge entity.
  */
-export function siteGraph() {
+export function siteGraph(locale: Locale, dict: Dictionary) {
   return {
     "@context": "https://schema.org",
-    "@graph": [organizationSchema(), websiteSchema()],
+    "@graph": [organizationSchema(locale, dict), websiteSchema(locale, dict)],
   };
 }
 
@@ -120,54 +121,97 @@ export function siteGraph() {
  * site so they extract cleanly into AI answers. FAQPage is also eligible for
  * Google rich results.
  */
-export function faqSchema() {
-  const faqs = [
-    {
-      q: "What is VADO?",
-      a: "VADO (VISION Arch. & Engineering Consultants) is a multidisciplinary architecture and engineering consultancy based in Al Khobar, Saudi Arabia. Established in 1994, it delivers architecture, engineering, and project development services across the Kingdom.",
-    },
-    {
-      q: "Where is VADO located?",
-      a: "VADO is headquartered at Al Fardan Tower, Office 401, in Al Khobar, Saudi Arabia, and serves clients throughout Saudi Arabia.",
-    },
-    {
-      q: "What services does VADO offer?",
-      a: "VADO provides architectural design, engineering design, project management, and site supervision, covering projects from first concept through construction on site.",
-    },
-    {
-      q: "When was VADO established?",
-      a: "VADO was established in 1994 and has decades of experience delivering urban, landscape, cultural, retail, hospitality, and residential projects in Saudi Arabia.",
-    },
-    {
-      q: "What types of projects does VADO work on?",
-      a: "VADO's portfolio spans waterfront master plans, mixed-use developments, commercial destinations, and private residential villas, including Al Hamra Waterfront, Matal, Tholal, and Courtyard Villa.",
-    },
-    {
-      q: "How can I contact VADO?",
-      a: "You can reach VADO by email at info@vado.sa or by phone at +966 542 900 447.",
-    },
-  ];
-
+export function faqSchema(locale: Locale, dict: Dictionary) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((item) => ({
+    inLanguage: locale,
+    mainEntity: dict.faq.map((item) => ({
       "@type": "Question",
-      name: item.q,
+      name: item.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: item.a,
+        text: item.answer,
       },
     })),
   };
 }
 
+/** AboutPage node for /about, wrapped around the shared organization entity. */
+export function aboutSchema(locale: Locale, dict: Dictionary) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: dict.pages.about.metaTitle,
+    url: absoluteUrl(locale, "/about"),
+    description: dict.meta.longDescription,
+    inLanguage: locale,
+    mainEntity: organizationSchema(locale, dict),
+  };
+}
+
+/**
+ * /services: a CollectionPage cross-linked to the organization, a breadcrumb,
+ * and one Service entity per discipline.
+ */
+export function servicesGraph(locale: Locale, dict: Dictionary) {
+  const pageUrl = absoluteUrl(locale, "/services");
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: dict.pages.services.heading,
+        description: dict.pages.services.metaDescription,
+        isPartOf: { "@id": WEBSITE_ID },
+        about: { "@id": ORG_ID },
+        breadcrumb: { "@id": `${pageUrl}#breadcrumb` },
+        inLanguage: locale,
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${pageUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: dict.pages.project.breadcrumbHome,
+            item: absoluteUrl(locale, "/"),
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: dict.nav.services,
+            item: pageUrl,
+          },
+        ],
+      },
+      ...dict.services.map((service) => ({
+        "@type": "Service",
+        "@id": `${pageUrl}#${service.id}`,
+        name: service.name,
+        serviceType: service.name,
+        description: service.description,
+        provider: { "@id": ORG_ID },
+        areaServed: { "@type": "Country", name: dict.brand.country },
+      })),
+    ],
+  };
+}
+
 /**
  * A single project, typed as CreativeWork, with a BreadcrumbList for the
- * project trail. Rendered on each /projects/[slug] page.
+ * project trail. Rendered on each /[lang]/projects/[slug] page.
  */
-export function projectGraph(project: Project) {
-  const projectUrl = `${SITE_URL}/projects/${project.slug}`;
+export function projectGraph(
+  project: Project,
+  locale: Locale,
+  dict: Dictionary
+) {
+  const projectUrl = absoluteUrl(locale, `/projects/${project.slug}`);
 
   return {
     "@context": "https://schema.org",
@@ -181,6 +225,7 @@ export function projectGraph(project: Project) {
         url: projectUrl,
         image: `${SITE_URL}${project.heroImage}`,
         genre: project.type,
+        inLanguage: locale,
         locationCreated: {
           "@type": "Place",
           name: project.location,
@@ -195,14 +240,14 @@ export function projectGraph(project: Project) {
           {
             "@type": "ListItem",
             position: 1,
-            name: "Home",
-            item: SITE_URL,
+            name: dict.pages.project.breadcrumbHome,
+            item: absoluteUrl(locale, "/"),
           },
           {
             "@type": "ListItem",
             position: 2,
-            name: "Projects",
-            item: `${SITE_URL}/#portfolio`,
+            name: dict.pages.project.breadcrumbProjects,
+            item: absoluteUrl(locale, "/projects"),
           },
           {
             "@type": "ListItem",

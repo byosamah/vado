@@ -11,14 +11,11 @@
  *   vertically on a scrubbed ScrollTrigger (yPercent -12 -> 12, ease none) as
  *   the section travels through the viewport. This replaces the old
  *   background-attachment:fixed trick, which was janky/broken on mobile.
- *   Guards prefers-reduced-motion (the layer stays static).
+ *   Guards prefers-reduced-motion (the layer stays static). The drift is
+ *   vertical only, so it needs no RTL treatment.
  * - Declarative reveals (useReveals on the section root): the H2 does a
- *   SplitText masked line reveal (data-headline); the "Start Your Project"
- *   button fades + rises in (data-reveal).
- *
- * Content:
- * - H2: "Let's Build The Future."
- * - Button: "Start Your Project" -> #contact
+ *   SplitText masked line reveal (data-headline); the CTA button fades + rises
+ *   in (data-reveal).
  */
 
 import { useRef } from "react";
@@ -26,8 +23,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useReveals } from "@/lib/gsap/reveals";
 import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap/gsap";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-export default function CTABanner() {
+export default function CTABanner({
+  cta,
+}: {
+  cta: Dictionary["home"]["cta"];
+}) {
   const root = useRef<HTMLElement>(null);
   const bg = useRef<HTMLDivElement>(null);
 
@@ -86,7 +88,7 @@ export default function CTABanner() {
             data-headline
             className="text-white mb-10"
           >
-            Let&apos;s Build The Future.
+            {cta.headline}
           </h2>
 
           <div data-reveal>
@@ -104,7 +106,7 @@ export default function CTABanner() {
               onMouseEnter={(e) => (e.currentTarget.style.color = "#000000")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#ffffff")}
             >
-              Start Your Project
+              {cta.button}
             </Link>
           </div>
         </div>

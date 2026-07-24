@@ -26,39 +26,28 @@
 import { useRef } from "react";
 import { useReveals } from "@/lib/gsap/reveals";
 import Link from "next/link";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-const blogPosts = [
-  {
-    id: 1,
-    title: "The Art of Minimalist Architecture",
-    category: "Design",
-    date: "September 15, 2023",
-    image: "/images/blog-1.png",
-  },
-  {
-    id: 2,
-    title: "Sustainable Building Materials",
-    category: "Sustainability",
-    date: "September 10, 2023",
-    image: "/images/blog-2.png",
-  },
-  {
-    id: 3,
-    title: "Urban Planning for the Future",
-    category: "Urban",
-    date: "September 5, 2023",
-    image: "/images/blog-3.png",
-  },
-  {
-    id: 4,
-    title: "Interior Design Trends 2024",
-    category: "Interior",
-    date: "August 28, 2023",
-    image: "/images/blog-4.png",
-  },
+/**
+ * Post imagery, paired with dict.hidden.blog.posts BY INDEX.
+ *
+ * NOTE: the posts themselves are PLACEHOLDER content with invented 2023 dates.
+ * This section is commented out of the homepage. Before enabling it, replace the
+ * entries in both dictionaries with real articles and give each one a real URL
+ * (every link here currently points at "#").
+ */
+const IMAGES = [
+  "/images/blog-1.png",
+  "/images/blog-2.png",
+  "/images/blog-3.png",
+  "/images/blog-4.png",
 ];
 
-export default function BlogGrid() {
+export default function BlogGrid({
+  blog,
+}: {
+  blog: Dictionary["hidden"]["blog"];
+}) {
   const root = useRef<HTMLElement>(null);
   useReveals(root);
 
@@ -71,10 +60,10 @@ export default function BlogGrid() {
             <div data-reveal className="flex items-center gap-3 mb-6">
               <span className="w-2 h-2 bg-black rounded-full" />
               <span className="text-sm tracking-widest uppercase text-gray-600">
-                Latest news
+                {blog.kicker}
               </span>
             </div>
-            <h2 data-headline>From the blog</h2>
+            <h2 data-headline>{blog.heading}</h2>
           </div>
 
           <Link
@@ -88,15 +77,15 @@ export default function BlogGrid() {
               transition-colors duration-300
             "
           >
-            View all posts
+            {blog.viewAll}
           </Link>
         </div>
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {blogPosts.map((post) => (
+          {blog.posts.map((post, index) => (
             <article
-              key={post.id}
+              key={IMAGES[index]}
               data-reveal
               className="group"
             >
@@ -106,8 +95,9 @@ export default function BlogGrid() {
                 data-img-reveal
                 className="block overflow-hidden mb-6"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={post.image}
+                  src={IMAGES[index]}
                   alt={post.title}
                   className="
                     w-full aspect-[4/3] object-cover

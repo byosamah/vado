@@ -14,10 +14,36 @@
   --color-border: #e5e5e5;
   --color-surface: #f5f5f5;
 
-  /* Typography */
+  /* Typography — Latin edition (the default) */
   --font-display: var(--font-schibsted), 'Schibsted Grotesk', system-ui, sans-serif;
   --font-body: var(--font-plex), 'IBM Plex Sans', system-ui, sans-serif;
   --font-primary: var(--font-body); /* back-compat alias */
+
+  /* Heading line-height. Arabic overrides this below. */
+  --heading-leading: 1.2;
+}
+
+/*
+ * Arabic edition type tokens.
+ * Swapping the two tokens here is all it takes to re-face the entire site,
+ * because every heading and every body rule reads --font-display / --font-body.
+ * Alexandria mirrors Schibsted Grotesk's rationalist display voice; IBM Plex
+ * Sans Arabic is the designed sibling of the Latin body face.
+ *
+ * Selector note: html[lang="ar"] (0,1,1) outranks :root (0,0,1), and both are
+ * un-layered, so this wins cleanly without !important.
+ */
+html[lang="ar"] {
+  --font-display: var(--font-alexandria), 'Alexandria', system-ui, sans-serif;
+  --font-body: var(--font-plex-arabic), 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-primary: var(--font-body);
+
+  /* Arabic sits on a taller body with deeper descenders and stacked marks.
+     The Latin 1.2 clips them and reads cramped. */
+  --heading-leading: 1.45;
+}
+
+:root {
 
   /* Layout */
   --content-max-width: 1400px;
@@ -101,7 +127,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: var(--heading-leading);
 }
 
 h1 {
@@ -162,8 +188,68 @@ h6 {
 }
 
 /* ============================================
+   ARABIC / RTL TYPOGRAPHY
+   ============================================ */
+
+/*
+ * Arabic is a CURSIVE script: letters join into words. CSS letter-spacing
+ * inserts gaps between glyphs and visually severs those joins, so a headline
+ * set with `tracking-widest` renders as disconnected shapes rather than words.
+ * The site uses tracking-wide / tracking-wider / tracking-widest on nearly
+ * every kicker, nav item, and button, so this neutralises all of them at once.
+ *
+ * Un-layered on purpose: Tailwind utilities live in @layer utilities, and in
+ * v4 an un-layered rule beats EVERY layered one. No !important needed.
+ */
+html[lang="ar"] * {
+  letter-spacing: 0;
+}
+
+/* Arabic body copy also wants a little more air between lines. */
+html[lang="ar"] body {
+  line-height: 1.8;
+}
+
+/*
+ * NOTE: the vertical service titles in ServicesTabs need a wider line box in
+ * Arabic (in vertical writing-mode `line-height` IS the line box width, and
+ * Arabic descenders overflow the 1.45 heading leading). That lives INLINE on
+ * the element, next to the writing-mode it belongs to, rather than here. See
+ * components/sections/ServicesTabs.tsx.
+ */
+
+/*
+ * Latin runs inside an Arabic page (emails, URLs, phone numbers, the wordmark)
+ * should stay left-to-right even though the paragraph flows right-to-left.
+ * `dir="ltr"` on the element handles direction; this keeps such runs isolated
+ * so surrounding punctuation does not jump to the wrong end.
+ */
+html[lang="ar"] [dir="ltr"] {
+  unicode-bidi: isolate;
+}
+
+/* ============================================
    UTILITY CLASSES
    ============================================ */
+
+/*
+ * Skip link: invisible until keyboard-focused, then pinned to the top.
+ * Uses logical inset so it lands in the correct corner in both directions.
+ */
+.skip-link {
+  position: absolute;
+  inset-inline-start: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--color-text-primary);
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.skip-link:focus {
+  inset-inline-start: 0;
+}
 
 .container {
   max-width: var(--content-max-width);
@@ -187,13 +273,20 @@ h6 {
   content: '';
   position: absolute;
   bottom: -2px;
-  left: 0;
+  inset-inline-start: 0;
   width: 100%;
   height: 1px;
   background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--transition-base);
+}
+
+/* The underline should grow from the side the reader starts on. Left in LTR,
+   right in RTL. transform-origin takes no logical keyword, so it is flipped
+   explicitly rather than through a logical property. */
+[dir="rtl"] .underline-hover::after {
+  transform-origin: right;
 }
 
 .underline-hover:hover::after,

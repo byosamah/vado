@@ -20,7 +20,16 @@
  * Respects prefers-reduced-motion by showing everything with no motion.
  */
 
-import { useGSAP, gsap, ScrollTrigger, SplitText, EASE, DUR, prefersReducedMotion } from "./gsap";
+import {
+  useGSAP,
+  gsap,
+  ScrollTrigger,
+  SplitText,
+  EASE,
+  DUR,
+  prefersReducedMotion,
+  directionSign,
+} from "./gsap";
 import type { RefObject } from "react";
 
 export function useReveals(scope: RefObject<HTMLElement | null>) {
@@ -44,12 +53,16 @@ export function useReveals(scope: RefObject<HTMLElement | null>) {
       }
 
       // 1) Fade / slide reveals — batched so neighbours stagger together.
+      //    "left" and "right" are reader-relative, not screen-relative: in an
+      //    RTL document the sign flips so content still enters from the side
+      //    the layout put it on.
+      const sign = directionSign();
       reveals.forEach((el) => {
         const dir = el.dataset.reveal || "up";
         const from: gsap.TweenVars = { autoAlpha: 0 };
         if (dir === "up" || dir === "") from.y = 30;
-        else if (dir === "left") from.x = -40;
-        else if (dir === "right") from.x = 40;
+        else if (dir === "left") from.x = -40 * sign;
+        else if (dir === "right") from.x = 40 * sign;
         else if (dir === "scale") from.scale = 0.96;
         gsap.set(el, from);
       });

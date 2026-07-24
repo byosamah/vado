@@ -3,23 +3,26 @@
 /**
  * Portfolio Showcase Component
  * ============================
- * Split layout with interactive sidebar and Swiper carousel.
+ * Split layout with an interactive title list and a Swiper carousel.
  *
  * Features:
- * - Left sidebar: "Our work" label + clickable project titles
- * - Right: Swiper carousel with portfolio images
- * - Clicking title navigates to that slide
- * - Clicking image opens project detail page
+ * - Sidebar: "Our work" label + clickable project titles
+ * - Carousel: Swiper with portfolio images
+ * - Hovering a title navigates to that slide
+ * - Clicking a title or image opens the project detail page
  *
  * Animation (GSAP via useReveals on the section root):
- * - Left sidebar "Our work" label and each project title Link carry data-reveal
- *   and rise/fade in on scroll, with the title Links auto-staggering as a group.
+ * - The sidebar label and each project title Link carry data-reveal and
+ *   rise/fade in on scroll, with the title Links auto-staggering as a group.
  *   (The "View all projects" link is currently commented out: few projects for
  *   now. The /projects index it pointed to still exists and is linked in the footer.)
- * - The right carousel column uses data-reveal="scale" to scale-fade in.
+ * - The carousel column uses data-reveal="scale" to scale-fade in.
  * - Reduced-motion is honoured by the reveal system: content stays fully
  *   visible. Swiper (fade effect, loop/rewind, autoplay) and all
  *   interactivity are untouched by the animation layer.
+ *
+ * RTL: Swiper receives `dir`, and the category caption uses logical `start-6`
+ * so it stays in the leading corner of the image in both directions.
  */
 
 import { useState, useRef } from "react";
@@ -29,33 +32,33 @@ import type { Swiper as SwiperType } from "swiper";
 import Link from "next/link";
 import Image from "next/image";
 import { useReveals } from "@/lib/gsap/reveals";
-import { getAllProjects } from "@/lib/projects";
+import { getDirection, localePath, type Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Project } from "@/lib/projects";
 
-import "swiper/css";
-import "swiper/css/effect-fade";
+interface PortfolioShowcaseProps {
+  lang: Locale;
+  portfolio: Dictionary["home"]["portfolio"];
+  projects: Project[];
+}
 
-// Get projects from centralized data
-const portfolioItems = getAllProjects().map((project, index) => ({
-  id: index + 1,
-  slug: project.slug,
-  title: project.title,
-  category: project.category,
-  image: project.heroImage,
-}));
-
-// Swiper's loop mode needs more than two slides to duplicate cleanly.
-// Below that, rewind gives the same endless feel without the blank frames.
-const useLoop = portfolioItems.length > 2;
-
-export default function PortfolioShowcase() {
+export default function PortfolioShowcase({
+  lang,
+  portfolio,
+  projects,
+}: PortfolioShowcaseProps) {
   const root = useRef<HTMLElement>(null);
   useReveals(root);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
 
-  // Handle clicking on a title - navigate to that slide
-  const handleTitleClick = (index: number) => {
+  // Swiper's loop mode needs more than two slides to duplicate cleanly.
+  // Below that, rewind gives the same endless feel without the blank frames.
+  const useLoop = projects.length > 2;
+
+  // Handle hovering a title - navigate to that slide
+  const handleTitleHover = (index: number) => {
     if (swiperRef) {
       swiperRef.slideToLoop(index);
     }
@@ -65,33 +68,33 @@ export default function PortfolioShowcase() {
     <section ref={root} id="portfolio" className="section bg-gray-50">
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-          {/* Left Sidebar - Project Titles */}
+          {/* Sidebar - Project Titles */}
           <div className="lg:col-span-4">
             {/* Section Label */}
             <div data-reveal className="flex items-center gap-3 mb-12">
               <span className="w-2 h-2 bg-black rounded-full" />
               <span className="text-sm tracking-widest uppercase text-gray-600">
-                Our work
+                {portfolio.kicker}
               </span>
             </div>
 
             {/* Project Titles List */}
             <div className="space-y-6">
-              {portfolioItems.map((item, index) => (
-                <div key={item.id}>
+              {projects.map((project, index) => (
+                <div key={project.slug}>
                   <Link
-                    href={`/projects/${item.slug}`}
-                    onMouseEnter={() => handleTitleClick(index)}
+                    href={localePath(lang, `/projects/${project.slug}`)}
+                    onMouseEnter={() => handleTitleHover(index)}
                     data-reveal
                     className={`
-                      block text-left w-full py-2 -my-2
+                      block text-start w-full py-2 -my-2
                       text-2xl md:text-3xl font-light
                       transition-colors duration-300
                       hover:text-black
                       ${activeIndex === index ? "text-black" : "text-gray-400"}
                     `}
                   >
-                    {item.title}
+                    {project.title}
                   </Link>
                 </div>
               ))}
@@ -103,7 +106,7 @@ export default function PortfolioShowcase() {
                 footer. Uncomment to restore when there are more projects.
             <div className="mt-12">
               <Link
-                href="/projects"
+                href={localePath(lang, "/projects")}
                 data-reveal
                 className="
                   text-sm tracking-widest uppercase
@@ -112,15 +115,17 @@ export default function PortfolioShowcase() {
                   transition-colors duration-300
                 "
               >
-                View all projects
+                {portfolio.viewAll}
               </Link>
             </div>
             */}
           </div>
 
-          {/* Right - Image Carousel */}
+          {/* Image Carousel */}
           <div data-reveal="scale" className="lg:col-span-8">
             <Swiper
+              key={lang}
+              dir={getDirection(lang)}
               modules={[Autoplay, EffectFade]}
               effect="fade"
               fadeEffect={{ crossFade: true }}
@@ -134,24 +139,24 @@ export default function PortfolioShowcase() {
               onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
               className="w-full aspect-[4/3]"
             >
-              {portfolioItems.map((item) => (
-                <SwiperSlide key={item.id}>
+              {projects.map((project) => (
+                <SwiperSlide key={project.slug}>
                   <Link
-                    href={`/projects/${item.slug}`}
+                    href={localePath(lang, `/projects/${project.slug}`)}
                     className="relative block w-full h-full overflow-hidden group"
                   >
                     <Image
-                      src={item.image}
-                      alt={item.title}
+                      src={project.heroImage}
+                      alt={project.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 1024px) 100vw, 66vw"
                       loading="lazy"
                     />
                     {/* Category overlay */}
-                    <div className="absolute bottom-6 left-6 z-10">
+                    <div className="absolute bottom-6 start-6 z-10">
                       <span className="text-sm tracking-widest uppercase text-white/80">
-                        {item.category}
+                        {project.category}
                       </span>
                     </div>
                   </Link>

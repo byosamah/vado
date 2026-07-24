@@ -10,6 +10,9 @@
  * tied directly to scroll position (linear "none" ease, start "top 80%" → end
  * "center 55%"). The label rides the shared declarative reveal engine (data-reveal).
  *
+ * The word-by-word split works unchanged in Arabic: SplitText segments on
+ * whitespace, so it never cuts inside a cursive word and the joins stay intact.
+ *
  * Under prefers-reduced-motion the bespoke read-along is skipped entirely, so
  * the statement stays fully visible with no split and no motion.
  */
@@ -17,8 +20,13 @@
 import { useRef } from "react";
 import { useReveals } from "@/lib/gsap/reveals";
 import { useGSAP, gsap, SplitText, prefersReducedMotion } from "@/lib/gsap/gsap";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-export default function QuoteBlock() {
+export default function QuoteBlock({
+  quote,
+}: {
+  quote: Dictionary["home"]["quote"];
+}) {
   const root = useRef<HTMLElement>(null);
   const quoteRef = useRef<HTMLParagraphElement>(null);
 
@@ -31,10 +39,10 @@ export default function QuoteBlock() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
-      const quote = quoteRef.current;
-      if (!quote) return;
+      const quoteEl = quoteRef.current;
+      if (!quoteEl) return;
 
-      const split = SplitText.create(quote, { type: "words,lines" });
+      const split = SplitText.create(quoteEl, { type: "words,lines" });
       gsap.set(split.words, { autoAlpha: 0.15 });
       gsap.to(split.words, {
         autoAlpha: 1,
@@ -42,14 +50,14 @@ export default function QuoteBlock() {
         duration: 0.8,
         stagger: 0.4,
         scrollTrigger: {
-          trigger: quote,
+          trigger: quoteEl,
           start: "top 80%",
           end: "center 55%",
           scrub: true,
         },
       });
     },
-    { scope: root }
+    { scope: root, dependencies: [quote.statement] }
   );
 
   return (
@@ -61,7 +69,7 @@ export default function QuoteBlock() {
             data-reveal
             className="text-sm tracking-widest uppercase text-gray-500 mb-6"
           >
-            VADO Vision Statement
+            {quote.kicker}
           </p>
 
           {/* Vision Statement */}
@@ -69,9 +77,7 @@ export default function QuoteBlock() {
             ref={quoteRef}
             className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed text-gray-800"
           >
-            To shape meaningful spaces through thoughtful design and engineering
-            excellence, creating environments that inspire, serve, and sustain
-            communities.
+            {quote.statement}
           </p>
         </div>
       </div>

@@ -5,6 +5,10 @@
  * ===================
  * Two-column grid showcasing the leadership team.
  *
+ * Names and roles come from the dictionary (both are translated); the portrait
+ * paths stay here and pair with the dictionary entries BY INDEX, since a
+ * localized name cannot be used as a stable key.
+ *
  * Animation (GSAP via useReveals):
  * - Root <section> ref drives all declarative reveals on scroll.
  * - Section header: "Leadership" subtitle fades + rises (data-reveal);
@@ -19,23 +23,17 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useReveals } from "@/lib/gsap/reveals";
+import { t, type Dictionary } from "@/lib/i18n/get-dictionary";
 
-const teamMembers = [
-  {
-    id: 1,
-    name: "Arch. Khalid Al Mulla",
-    role: "President",
-    image: "/images/team-khalid.webp",
-  },
-  {
-    id: 2,
-    name: "Arch. Mutaz Al Mulla",
-    role: "Vice President & Chief Architect",
-    image: "/images/team-mutaz.webp",
-  },
-];
+/** Portraits, in the same order as `dict.team`. */
+const PORTRAITS = ["/images/team-khalid.webp", "/images/team-mutaz.webp"];
 
-export default function TeamGrid() {
+interface TeamGridProps {
+  team: Dictionary["team"];
+  copy: Dictionary["home"]["team"];
+}
+
+export default function TeamGrid({ team, copy }: TeamGridProps) {
   const root = useRef<HTMLElement>(null);
   useReveals(root);
 
@@ -47,21 +45,21 @@ export default function TeamGrid() {
           <div className="flex items-center gap-3 mb-6" data-reveal>
             <span className="w-2 h-2 bg-black rounded-full" />
             <span className="text-sm tracking-widest uppercase text-gray-600">
-              Leadership
+              {copy.kicker}
             </span>
           </div>
-          <h2 data-headline>Meet our people</h2>
+          <h2 data-headline>{copy.headline}</h2>
         </div>
 
         {/* Team Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
-          {teamMembers.map((member) => (
-            <div key={member.id} className="group" data-reveal>
+          {team.map((member, index) => (
+            <div key={PORTRAITS[index]} className="group" data-reveal>
               {/* Image Container with hover scale */}
               <div className="relative overflow-hidden mb-6 aspect-[3/4]" data-img-reveal>
                 <Image
-                  src={member.image}
-                  alt={`${member.name}, ${member.role} at VADO`}
+                  src={PORTRAITS[index]}
+                  alt={t(copy.memberAlt, { name: member.name, role: member.role })}
                   fill
                   sizes="(max-width: 640px) 100vw, 320px"
                   className="
