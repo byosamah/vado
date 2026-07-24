@@ -117,7 +117,10 @@ The site ships two editions: English at `/en/*` and Arabic at `/ar/*`. There is 
 
 ## Gotchas
 
-- **Turbopack panic** (Next 16): dev can crash with "Failed to write app endpoint" / ChunkLoadError. Fix: `rm -rf .next` then restart.
+- **Turbopack panic** (Next 16): dev can crash with "Failed to write app endpoint" / ChunkLoadError. Fix: `rm -rf .next` then restart. **Kill `next dev` FIRST** — deleting `.next` under a running server kills it mid-request with `ENOENT ... build-manifest.json`, and the open browser tab then wedges (CDP `Runtime.evaluate` times out), needing a fresh tab.
+- **`perl -CSD -pi -e 's/x/y/'` silently no-ops on non-ASCII** and still exits 0: `-C` decodes the FILE as UTF-8 but leaves the pattern in `-e` as raw bytes, so nothing ever matches. Do bulk Arabic/UTF-8 replacements in Node (`fs.readFileSync(f,'utf8').split(a).join(b)`) and always assert a non-zero replacement count afterwards.
+- **New `public/` files need a dev restart**: Next dev snapshots the directory at boot, so a newly added asset 404s until you restart. Files prefixed with `_` are never served at all.
+- **Prove glyph fit by measuring, not squinting.** Canvas `measureText` returns `actualBoundingBoxAscent/Descent` (the INK) and `fontBoundingBoxAscent/Descent` (the metrics the line box is built from); comparing them against `font-size × line-height` says definitively whether text fits its box. Two Arabic clipping "fixes" were shipped on eyeballed screenshots before this settled it.
 - **Pre-existing lint**: one `react-hooks/refs` error in HeroSlider's `contextSafe` slide handler (GSAP wiring; don't chase it casually). That is the entire baseline — a clean `npm run lint` should show exactly 1 error and 0 warnings. The old `<img>` warnings in Header/BlogGrid now carry explicit `eslint-disable-next-line @next/next/no-img-element` comments (both are deliberate: an SVG wordmark and placeholder blog art).
 - **No styled-jsx** (`<style jsx>`): under Turbopack SSR it rewrites multi-line `className` strings on host elements into invalid JS, causing a `SyntaxError`/500 that `tsc` does NOT catch. Keep global CSS in `app/globals.css`.
 - `npx tsc --noEmit` checks types only. Confirm SSR by loading the dev server; a real render catches runtime/SSR errors tsc misses.
