@@ -115,7 +115,7 @@ export default function ContactSection() {
                   Get in Touch
                 </span>
               </div>
-              <h2 data-headline className="mb-8">
+              <h2 data-headline className="mb-10">
                 Ready to bring your
                 <br />
                 vision to life?
@@ -294,7 +294,7 @@ export default function ContactSection() {
           {/* Right Column - Contact Info */}
           <div data-reveal="right" className="lg:pt-24">
             <div className="bg-gray-50 p-8 md:p-12">
-              <h3 className="text-2xl font-light mb-8">Contact Information</h3>
+              <h3 className="mb-8">Contact Information</h3>
 
               <div className="space-y-6">
                 {/* Email */}
@@ -304,7 +304,7 @@ export default function ContactSection() {
                     <p className="text-sm text-gray-500 mb-1">Email</p>
                     <a
                       href="mailto:info@vado.sa"
-                      className="text-lg hover:text-gray-600 transition-colors"
+                      className="text-lg inline-block py-2 -my-2 hover:text-gray-600 transition-colors"
                     >
                       info@vado.sa
                     </a>
@@ -318,7 +318,7 @@ export default function ContactSection() {
                     <p className="text-sm text-gray-500 mb-1">Phone</p>
                     <a
                       href="tel:+966542900447"
-                      className="text-lg hover:text-gray-600 transition-colors"
+                      className="text-lg inline-block py-2 -my-2 hover:text-gray-600 transition-colors"
                     >
                       +966 542 900 447
                     </a>
@@ -353,7 +353,7 @@ export default function ContactSection() {
                       <p className="text-sm text-gray-500 mb-1">Careers</p>
                       <Link
                         href="/careers"
-                        className="text-lg inline-flex items-center gap-2 hover:text-gray-600 transition-colors"
+                        className="text-lg inline-flex items-center gap-2 py-2 -my-2 hover:text-gray-600 transition-colors"
                       >
                         Submit your CV
                         <ArrowRight className="w-4 h-4" />
@@ -366,7 +366,7 @@ export default function ContactSection() {
                       <p className="text-sm text-gray-500 mb-1">Suppliers</p>
                       <Link
                         href="/suppliers"
-                        className="text-lg inline-flex items-center gap-2 hover:text-gray-600 transition-colors"
+                        className="text-lg inline-flex items-center gap-2 py-2 -my-2 hover:text-gray-600 transition-colors"
                       >
                         Register as a supplier
                         <ArrowRight className="w-4 h-4" />
@@ -377,7 +377,7 @@ export default function ContactSection() {
               </div>
 
               {/* Established */}
-              <div className="mt-10 pt-8 border-t border-gray-200">
+              <div className="mt-12 pt-8 border-t border-gray-200">
                 <p className="text-sm text-gray-500">
                   Established 1994 • Al Khobar, Saudi Arabia
                 </p>

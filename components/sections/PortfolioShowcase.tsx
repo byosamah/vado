@@ -84,7 +84,7 @@ export default function PortfolioShowcase() {
                     onMouseEnter={() => handleTitleClick(index)}
                     data-reveal
                     className={`
-                      block text-left w-full
+                      block text-left w-full py-2 -my-2
                       text-2xl md:text-3xl font-light
                       transition-colors duration-300
                       hover:text-black

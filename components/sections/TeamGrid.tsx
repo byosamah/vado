@@ -3,7 +3,7 @@
 /**
  * Team Grid Component
  * ===================
- * Four-column grid showcasing team members.
+ * Two-column grid showcasing the leadership team.
  *
  * Animation (GSAP via useReveals):
  * - Root <section> ref drives all declarative reveals on scroll.
@@ -74,7 +74,7 @@ export default function TeamGrid() {
               </div>
 
               {/* Name & Role */}
-              <h4 className="text-xl font-light mb-1">{member.name}</h4>
+              <h4 className="mb-1">{member.name}</h4>
               <p className="text-sm text-gray-600">{member.role}</p>
             </div>
           ))}

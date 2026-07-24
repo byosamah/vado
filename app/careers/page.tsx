@@ -46,24 +46,27 @@ export default function CareersPage() {
       <Header forceSolid />
 
       <main className="pt-24">
-        {/* Intro */}
-        <section className="container pt-12 md:pt-20 pb-16 md:pb-24">
-          <div className="max-w-4xl">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="w-2 h-2 bg-black rounded-full" />
-              <span className="text-sm tracking-widest uppercase text-gray-600">
-                Careers
-              </span>
+        {/* Intro — same .section/.container structure as the other subpage
+            intros so they all share one responsive rhythm */}
+        <section className="section">
+          <div className="container">
+            <div className="max-w-4xl">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="w-2 h-2 bg-black rounded-full" />
+                <span className="text-sm tracking-widest uppercase text-gray-600">
+                  Careers
+                </span>
+              </div>
+
+              <h1>Join the VADO team</h1>
+
+              <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
+                We are always glad to meet architects, engineers, and project
+                professionals who care about the craft. Share your CV and
+                portfolio below and we will keep you in mind for current and
+                upcoming roles.
+              </p>
             </div>
-
-            <h1>Join the VADO team</h1>
-
-            <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
-              We are always glad to meet architects, engineers, and project
-              professionals who care about the craft. Share your CV and
-              portfolio below and we will keep you in mind for current and
-              upcoming roles.
-            </p>
           </div>
         </section>
 
@@ -73,7 +76,7 @@ export default function CareersPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
               {/* Guidance */}
               <div className="lg:col-span-5">
-                <h2 className="text-2xl font-light mb-6">How it works</h2>
+                <h2 className="mb-6">How it works</h2>
                 <p className="text-base leading-relaxed text-gray-600 mb-6">
                   Add a link to your CV or portfolio (a Google Drive, Dropbox, or
                   LinkedIn link works well). Tell us the kind of role you are

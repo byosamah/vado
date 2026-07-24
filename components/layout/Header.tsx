@@ -53,6 +53,23 @@ export default function Header({ forceSolid = false }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Lock page scroll behind the open overlay; close the menu if the
+    // viewport grows past the md breakpoint so the lock can't get stranded.
+    if (!isMobileMenuOpen) return;
+
+    document.documentElement.style.overflow = "hidden";
+
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = () => setIsMobileMenuOpen(false);
+    desktop.addEventListener("change", closeOnDesktop);
+
+    return () => {
+      document.documentElement.style.overflow = "";
+      desktop.removeEventListener("change", closeOnDesktop);
+    };
+  }, [isMobileMenuOpen]);
+
   // Close mobile menu when clicking a link
   const handleNavClick = () => {
     setIsMobileMenuOpen(false);
@@ -74,7 +91,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
       <div className="container">
         <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
-          <Link href="/" className="block">
+          <Link href="/" className="flex items-center min-h-11">
             <img
               src="/logo.svg"
               alt="VADO Consultants"
@@ -92,10 +109,14 @@ export default function Header({ forceSolid = false }: HeaderProps) {
               <Link
                 key={item.label}
                 href={item.href}
-                style={{ color: (forceSolid || isScrolled) ? "#1f2937" : "#ffffff" }}
-                className="text-sm tracking-wide uppercase underline-hover transition-colors duration-300"
+                className={`
+                  inline-flex items-center py-3
+                  text-sm tracking-wide uppercase
+                  transition-colors duration-300
+                  ${(forceSolid || isScrolled) ? "text-gray-800" : "text-white"}
+                `}
               >
-                {item.label}
+                <span className="underline-hover">{item.label}</span>
               </Link>
             ))}
           </nav>
@@ -109,6 +130,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
               ${isMobileMenuOpen || (!forceSolid && !isScrolled) ? "text-white" : "text-black"}
             `}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
               <X className="w-6 h-6" />
@@ -124,7 +146,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
         className={`
           md:hidden
           fixed inset-0 top-20
-          bg-black
+          bg-black overflow-y-auto
           transition-all duration-300 ease-out
           ${isMobileMenuOpen
             ? "opacity-100 pointer-events-auto"

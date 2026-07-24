@@ -177,8 +177,11 @@ export default function HeroSlider() {
     }
   });
 
+  // h-dvh (not h-screen/100vh): on mobile the browser toolbar shrinks the
+  // visible viewport, and 100vh would push the bottom-anchored slide text
+  // and pagination below the fold on load.
   return (
-    <section ref={root} className="relative h-screen w-full">
+    <section ref={root} className="relative h-dvh w-full">
       {/* VADO Tagline - Top Left */}
       <div className="absolute top-32 left-0 right-0 z-10">
         <div className="container">
@@ -243,11 +246,7 @@ export default function HeroSlider() {
                   {/* Title */}
                   <h2
                     data-hero-title
-                    className="
-                      text-4xl md:text-5xl lg:text-6xl
-                      font-light text-white
-                      max-w-2xl
-                    "
+                    className="text-white max-w-2xl"
                   >
                     {slide.title}
                   </h2>

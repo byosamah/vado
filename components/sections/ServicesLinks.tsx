@@ -41,6 +41,8 @@ export default function ServicesLinks() {
   const root = useRef<HTMLElement>(null);
   useReveals(root);
 
+  // Deliberately compact band (py-16/24), not the full .section rhythm:
+  // this is a slim strip of three links, not a content section.
   return (
     <section ref={root} className="py-16 md:py-24 bg-white border-t border-gray-100">
       <div className="container">
@@ -50,13 +52,16 @@ export default function ServicesLinks() {
               <Link
                 href={link.href}
                 className="
+                  inline-flex items-center min-h-11
                   text-xl md:text-2xl font-light
                   text-gray-800 hover:text-black
-                  underline-hover
                   transition-colors duration-300
                 "
               >
-                {link.text}
+                {/* underline-hover lives on an inner span: its ::after hangs at
+                    bottom:-2px of the element box, so padding the link directly
+                    would drop the underline far below the text. */}
+                <span className="underline-hover">{link.text}</span>
               </Link>
             </div>
           ))}

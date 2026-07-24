@@ -147,7 +147,7 @@ export default function AboutPage() {
                 </span>
               </div>
               <h2>From first concept to final detail</h2>
-              <p className="text-lg leading-relaxed text-gray-600 mt-8 max-w-2xl">
+              <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
                 Our work spans urban, landscape, cultural, retail, hospitality,
                 and residential projects across the Kingdom, delivered through
                 four integrated disciplines.
@@ -161,7 +161,7 @@ export default function AboutPage() {
                   <span className="block text-sm tracking-widest text-gray-400 mb-6">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="text-2xl md:text-3xl font-light mb-4">
+                  <h3 className="mb-4">
                     {service.name}
                   </h3>
                   <p className="text-base leading-relaxed text-gray-600">
@@ -192,7 +192,7 @@ export default function AboutPage() {
                   <span className="block text-sm tracking-widest text-gray-400 mb-6">
                     {principle.id}
                   </span>
-                  <h3 className="text-2xl md:text-3xl font-light mb-4">
+                  <h3 className="mb-4">
                     {principle.title}
                   </h3>
                   <p className="text-base leading-relaxed text-gray-600 max-w-xs">
@@ -229,7 +229,7 @@ export default function AboutPage() {
                       className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ease-out group-hover:scale-105"
                     />
                   </div>
-                  <h4 className="text-xl font-light mb-1">{member.name}</h4>
+                  <h4 className="mb-1">{member.name}</h4>
                   <p className="text-sm text-gray-600">{member.role}</p>
                 </div>
               ))}

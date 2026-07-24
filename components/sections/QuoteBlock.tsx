@@ -59,7 +59,7 @@ export default function QuoteBlock() {
           {/* Section label */}
           <p
             data-reveal
-            className="text-sm tracking-widest uppercase text-gray-500 mb-8"
+            className="text-sm tracking-widest uppercase text-gray-500 mb-6"
           >
             VADO Vision Statement
           </p>

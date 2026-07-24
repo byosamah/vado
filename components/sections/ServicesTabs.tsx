@@ -156,7 +156,7 @@ export default function ServicesTabs() {
                 {/* Vertical Title - Always visible */}
                 <div className="flex items-end justify-start p-6 min-w-[60px]">
                   <h3
-                    className="text-2xl font-light tracking-wide whitespace-nowrap"
+                    className="whitespace-nowrap"
                     style={{
                       writingMode: "vertical-lr",
                       transform: "rotate(180deg)",
@@ -210,9 +210,10 @@ export default function ServicesTabs() {
               {/* Header */}
               <button
                 onClick={() => handleMobileToggle(service.id)}
-                className="w-full flex items-center justify-between p-6"
+                aria-expanded={isExpanded}
+                className="w-full flex items-center justify-between py-6 px-(--section-padding-x)"
               >
-                <h3 className="text-xl font-light">{service.label}</h3>
+                <h3>{service.label}</h3>
                 <span className="text-2xl font-light text-gray-400">
                   {isExpanded ? "−" : "+"}
                 </span>
@@ -226,7 +227,10 @@ export default function ServicesTabs() {
                 }
               >
                 <div className="overflow-hidden">
-                  <div className="px-6 pb-6 space-y-4">
+                  {/* Horizontal padding tracks --section-padding-x so the
+                      full-bleed accordion's text aligns with .container
+                      content at every breakpoint (24px -> 16px below 480). */}
+                  <div className="px-(--section-padding-x) pb-6 space-y-4">
                     <div className="relative w-full h-48">
                       <Image
                         src={service.image}

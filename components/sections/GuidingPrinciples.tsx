@@ -66,7 +66,7 @@ export default function GuidingPrinciples() {
             <div
               key={principle.id}
               data-reveal
-              className="md:px-8 md:border-l md:border-white/15 md:first:border-l-0 md:first:pl-0"
+              className="md:pl-8 md:border-l md:border-white/15 md:first:border-l-0 md:first:pl-0"
             >
               {/* Index */}
               <span className="block text-sm tracking-widest text-white/40 mb-6">
@@ -74,7 +74,7 @@ export default function GuidingPrinciples() {
               </span>
 
               {/* Title */}
-              <h3 className="text-2xl md:text-3xl font-light text-white mb-4">
+              <h3 className="text-white mb-4">
                 {principle.title}
               </h3>
 

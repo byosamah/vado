@@ -103,7 +103,7 @@ export default async function ProjectPage({
         <div className="container py-8">
           <Link
             href="/#portfolio"
-            className="inline-flex items-center gap-2 text-sm tracking-wide text-gray-600 hover:text-black transition-colors"
+            className="inline-flex items-center gap-2 py-3 -my-3 text-sm tracking-wide text-gray-600 hover:text-black transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Projects
@@ -133,12 +133,12 @@ export default async function ProjectPage({
               </span>
 
               {/* Title */}
-              <h1 className="text-4xl md:text-5xl font-light mt-6 mb-8">
+              <h1 className="mt-6">
                 {project.title}
               </h1>
 
               {/* Description */}
-              <p className="text-lg leading-relaxed text-gray-600">
+              <p className="text-lg leading-relaxed text-gray-600 mt-10">
                 {project.description}
               </p>
             </div>
@@ -146,9 +146,12 @@ export default async function ProjectPage({
             {/* Right Column — Project Details */}
             <div className="lg:col-span-5">
               <div className="lg:pl-8 lg:border-l border-gray-200">
-                <h3 className="text-sm tracking-widest uppercase text-gray-500 mb-6">
+                {/* Eyebrow label (span, not a heading): as an h3 the global
+                    type scale would force it to 32px, but it's authored as the
+                    site-wide 14px kicker pattern. */}
+                <span className="block text-sm tracking-widest uppercase text-gray-500 mb-6">
                   Project Details
-                </h3>
+                </span>
 
                 <dl className="space-y-4">
                   <div>
@@ -188,7 +191,7 @@ export default async function ProjectPage({
               {previous ? (
                 <Link
                   href={`/projects/${previous.slug}`}
-                  className="group flex items-center gap-3 text-gray-600 hover:text-black transition-colors"
+                  className="group flex items-center gap-3 py-2 -my-2 text-gray-600 hover:text-black transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <div>
@@ -206,7 +209,7 @@ export default async function ProjectPage({
               {next ? (
                 <Link
                   href={`/projects/${next.slug}`}
-                  className="group flex items-center gap-3 text-right text-gray-600 hover:text-black transition-colors"
+                  className="group flex items-center gap-3 py-2 -my-2 text-right text-gray-600 hover:text-black transition-colors"
                 >
                   <div>
                     <span className="text-xs tracking-widest uppercase text-gray-400 block">

@@ -29,7 +29,7 @@ Header (sticky, transparent→white on scroll)
   └── ServicesTabs
   └── QuoteBlock
   └── TeamGrid
-  └── TestimonialsSlider
+  └── GuidingPrinciples
   └── BlogGrid
   └── ContactSection
   └── CTABanner
@@ -46,7 +46,6 @@ components/
 ### Design System (`app/globals.css`)
 CSS variables define the design tokens:
 - `--color-*` — Color palette
-- `--spacing-*` — Spacing scale (xs→5xl)
 - `--section-padding-*` — Responsive section padding
 - `--transition-*` — Animation timing
 
@@ -101,5 +100,6 @@ Beyond the homepage there are real routes: `/about`, `/services`, `/projects` (i
 - **`next/font` variables go on `<html>`, not `<body>`**: type tokens (`--font-display`/`--font-body`) live in `:root`, and a `:root` var referencing a next/font var scoped to `<body>` computes to empty, so text silently falls back to Tailwind's default sans. Verify in-browser: `getComputedStyle(document.documentElement).getPropertyValue('--font-display')` must be non-empty (tsc won't catch this).
 - **Mobile Lighthouse ~92 is a Lantern-simulation artifact, not real slowness** (observed LCP ~80ms, CLS 0, desktop 100). The hero's Swiper + GSAP client JS gates the LCP text under the throttled-mobile model; changing/removing the hero animation and deferring below-fold JS do NOT move it. Only a server-rendered hero would. Don't re-chase 95 without that rework.
 - **AVIF regressed mobile LCP** (heavier decode on throttled CPUs, measured 99→95). `next.config.ts` stays WebP-only; do not re-add `formats: ['image/avif', ...]`.
-- **Tailwind v4 cascade layers**: element `margin` resets live in `@layer base` (`globals.css`) so `mt-*`/`mb-*` utilities can override them. An UN-layered `h1–h6 { margin: 0 }` / `p { margin: 0 }` beats EVERY margin utility (un-layered always wins over layered), silently zeroing all heading/paragraph margins site-wide (renders 0px, not the intended gap). Font-size rules stay un-layered on purpose — the global type scale is not overridable by `text-*` utilities.
+- **Tailwind v4 cascade layers**: element `margin` resets AND the `p { color }` / `a { color; transition }` defaults live in `@layer base` (`globals.css`) so utilities can override them. Any UN-layered element rule beats EVERY layered utility (un-layered always wins) — this once made the mobile menu's `text-white` links render black-on-black and silently ignored ~35 paragraph color utilities site-wide. Font-size/weight rules stay un-layered on purpose — the global type scale is not overridable by `text-*`/`font-*` utilities, so don't put those on `h1–h6` (dead code that misleads readers).
+- **`space-y-*` + child `-my-*` don't mix**: v4 compiles `space-y` with a `:where()` selector (specificity 0), so a child's `-my-*` (0-1-0) overrides both space-y margins — the spacing class goes dead and hit-slop margins collapse into overlapping tap targets. For stacked link lists, use flush children with `py-2` and no `space-y` (see Footer).
 - **CSS comment `*/`**: never write `*/` inside a comment (e.g. `mt-*/mb-*`) — it ends the comment early and 500s the CSS build. tsc/lint miss it; only a real render catches it.

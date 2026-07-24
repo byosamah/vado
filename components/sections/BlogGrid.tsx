@@ -123,7 +123,7 @@ export default function BlogGrid() {
               </span>
 
               {/* Title */}
-              <h4 className="text-lg font-light mb-2">
+              <h4 className="mb-2">
                 <Link
                   href="#"
                   className="hover:text-gray-600 transition-colors duration-300"

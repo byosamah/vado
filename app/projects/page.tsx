@@ -42,7 +42,7 @@ export default function ProjectsIndexPage() {
               Selected Work
             </span>
 
-            <h1 className="text-4xl md:text-5xl font-light mt-6 max-w-3xl">
+            <h1 className="mt-6 max-w-3xl">
               Architecture projects in Saudi Arabia
             </h1>
 
@@ -82,7 +82,7 @@ export default function ProjectsIndexPage() {
                     <span className="text-xs tracking-widest uppercase text-gray-500">
                       {project.category}
                     </span>
-                    <h2 className="text-2xl font-light mt-2 group-hover:text-gray-600 transition-colors">
+                    <h2 className="mt-2 group-hover:text-gray-600 transition-colors">
                       {project.title}
                     </h2>
                     <p className="text-sm text-gray-500 mt-1">

@@ -36,12 +36,11 @@ export default function Footer() {
           <div data-reveal className="lg:col-span-2">
             <Link
               href="/"
-              className="text-3xl font-semibold tracking-wider mb-6 block"
-              style={{ color: "#ffffff" }}
+              className="text-3xl font-semibold tracking-wider mb-6 block text-white"
             >
               VADO
             </Link>
-            <p className="leading-relaxed max-w-md" style={{ color: "rgba(255,255,255,0.6)" }}>
+            <p className="leading-relaxed max-w-md text-white/60">
               VISION Arch. & Engineering Consultants. Transforming ideas into
               built realities through thoughtful design and engineering
               excellence since 1994.
@@ -50,27 +49,27 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div data-reveal>
-            <h4 className="font-medium mb-6 text-sm tracking-widest uppercase" style={{ color: "#ffffff" }}>
+            <h4 className="font-medium mb-6 tracking-widest uppercase text-white">
               Contact
             </h4>
-            <div className="space-y-4">
+            {/* Flush-stacked py-2 rows: same 16px visual gap as space-y-4, but the
+                tap-to-email/tap-to-call links grow to ~42px hit boxes. */}
+            <div>
               <a
                 href="mailto:info@vado.sa"
-                className="flex items-center gap-3 hover:opacity-100 transition-opacity"
-                style={{ color: "rgba(255,255,255,0.6)" }}
+                className="flex items-center gap-3 py-2 text-white/60 hover:text-white transition-colors"
               >
                 <Mail className="w-4 h-4" />
                 info@vado.sa
               </a>
               <a
                 href="tel:+966542900447"
-                className="flex items-center gap-3 hover:opacity-100 transition-opacity"
-                style={{ color: "rgba(255,255,255,0.6)" }}
+                className="flex items-center gap-3 py-2 text-white/60 hover:text-white transition-colors"
               >
                 <Phone className="w-4 h-4" />
                 +966 542 900 447
               </a>
-              <div className="flex items-start gap-3" style={{ color: "rgba(255,255,255,0.6)" }}>
+              <div className="flex items-start gap-3 py-2 text-white/60">
                 <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
                 <span>
                   Al Fardan Tower – Office 401
@@ -83,35 +82,34 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div data-reveal>
-            <h4 className="font-medium mb-6 text-sm tracking-widest uppercase" style={{ color: "#ffffff" }}>
+            <h4 className="font-medium mb-6 tracking-widest uppercase text-white">
               Quick Links
             </h4>
-            <div className="space-y-2">
+            {/* No space-y here: in Tailwind v4 a child's -my-* would override the
+                :where()-scoped space-y margins and the hit boxes would overlap.
+                Flush-stacked py-2 links give clean 16px gaps and ~42px targets. */}
+            <div>
               <Link
                 href="/projects"
-                className="block py-2 -my-1 hover:opacity-100 transition-opacity"
-                style={{ color: "rgba(255,255,255,0.6)" }}
+                className="block py-2 text-white/60 hover:text-white transition-colors"
               >
                 Projects
               </Link>
               <Link
                 href="/about"
-                className="block py-2 -my-1 hover:opacity-100 transition-opacity"
-                style={{ color: "rgba(255,255,255,0.6)" }}
+                className="block py-2 text-white/60 hover:text-white transition-colors"
               >
                 About
               </Link>
               <Link
                 href="/services"
-                className="block py-2 -my-1 hover:opacity-100 transition-opacity"
-                style={{ color: "rgba(255,255,255,0.6)" }}
+                className="block py-2 text-white/60 hover:text-white transition-colors"
               >
                 Services
               </Link>
               <Link
                 href="#contact"
-                className="block py-2 -my-1 hover:opacity-100 transition-opacity"
-                style={{ color: "rgba(255,255,255,0.6)" }}
+                className="block py-2 text-white/60 hover:text-white transition-colors"
               >
                 Contact
               </Link>
@@ -122,7 +120,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div data-reveal className="pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           {/* Copyright */}
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
+          <p className="text-sm text-white/40">
             © {new Date().getFullYear()} VISION Arch. & Engineering Consultants.
             All rights reserved.
           </p>
@@ -133,8 +131,7 @@ export default function Footer() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm py-2 px-1 -my-1 hover:opacity-100 transition-opacity"
-                style={{ color: "rgba(255,255,255,0.4)" }}
+                className="text-sm py-2 px-1 -my-1 text-white/40 hover:text-white transition-colors"
               >
                 {link.label}
               </a>

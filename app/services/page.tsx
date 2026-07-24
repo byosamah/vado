@@ -122,24 +122,27 @@ export default function ServicesPage() {
       <Header forceSolid />
 
       <main className="pt-24">
-        {/* Intro */}
-        <section className="container pt-12 md:pt-20 pb-16 md:pb-24">
-          <div className="max-w-4xl">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="w-2 h-2 bg-black rounded-full" />
-              <span className="text-sm tracking-widest uppercase text-gray-600">
-                Our Services
-              </span>
+        {/* Intro — same .section/.container structure as the /about and
+            /projects intros so all subpage intros share one rhythm */}
+        <section className="section">
+          <div className="container">
+            <div className="max-w-4xl">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="w-2 h-2 bg-black rounded-full" />
+                <span className="text-sm tracking-widest uppercase text-gray-600">
+                  Our Services
+                </span>
+              </div>
+
+              <h1>Architecture and engineering services in Saudi Arabia</h1>
+
+              <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
+                VADO ({LEGAL_NAME}) is a multidisciplinary consultancy established
+                in {FOUNDING_YEAR} and based in {ADDRESS.city}, {ADDRESS.country}.
+                Our work spans four connected disciplines that carry a project from
+                concept to completion. Explore each one below.
+              </p>
             </div>
-
-            <h1>Architecture and engineering services in Saudi Arabia</h1>
-
-            <p className="text-lg leading-relaxed text-gray-600 mt-10 max-w-2xl">
-              VADO ({LEGAL_NAME}) is a multidisciplinary consultancy established
-              in {FOUNDING_YEAR} and based in {ADDRESS.city}, {ADDRESS.country}.
-              Our work spans four connected disciplines that carry a project from
-              concept to completion. Explore each one below.
-            </p>
           </div>
         </section>
 
@@ -164,7 +167,7 @@ export default function ServicesPage() {
                       <span className="text-sm tracking-widest uppercase text-gray-400">
                         {number}
                       </span>
-                      <h2 className="mt-4">{service.name}</h2>
+                      <h2 className="mt-6">{service.name}</h2>
                       <p className="text-lg leading-relaxed text-gray-600 mt-6 max-w-xl">
                         {service.description}
                       </p>
