@@ -31,7 +31,7 @@ import { t, type Dictionary } from "@/lib/i18n/get-dictionary";
 
 interface FooterProps {
   lang: Locale;
-  /** The wordmark, in this locale. "VADO" in English, "فادو" in Arabic. */
+  /** The wordmark, in this locale. "VADO" in English, "ڤادو" in Arabic. */
   brandName: string;
   footer: Dictionary["footer"];
   nav: Dictionary["nav"];
@@ -63,7 +63,7 @@ export default function Footer({ lang, brandName, footer, nav }: FooterProps) {
           <div data-reveal className="lg:col-span-2">
             {/* Text wordmark, not the logo. The header keeps the Latin logo SVG
                 (a graphic never translates), but this is the firm's NAME set as
-                type, so it reads فادو in Arabic. No dir="ltr" here: forcing LTR
+                type, so it reads ڤادو in Arabic. No dir="ltr" here: forcing LTR
                 on Arabic text would strand the following punctuation. */}
             <Link
               href={localePath(lang, "/")}
