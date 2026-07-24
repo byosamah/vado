@@ -102,7 +102,7 @@ export const projectSources: ProjectSource[] = [
   },
   {
     slug: "tholal",
-    title: { en: "Tholal", ar: "ظلال" },
+    title: { en: "Tholal", ar: "ظُلل" },
     category: { en: "Commercial", ar: "تجاري" },
     type: { en: "Commercial Boulevard", ar: "بوليفارد تجاري" },
     client: { en: "MSM Group", ar: "مجموعة إم إس إم" },
@@ -112,7 +112,7 @@ export const projectSources: ProjectSource[] = [
     },
     description: {
       en: "Designed as a contemporary lifestyle destination, Tholal brings together retail, dining, and leisure experiences within a vibrant open-air environment. The architectural concept emphasizes connectivity through shaded pedestrian walkways, elevated terraces, and welcoming public plazas that encourage social interaction. A refined combination of steel, natural wood, stone, and lush landscaping creates a distinctive identity, while integrated water features and passive shading strategies enhance comfort and enrich the visitor experience throughout the year.",
-      ar: "صُمّم ظلال ليكون وجهة معاصرة لأسلوب الحياة، يجمع بين تجارب التسوق والمطاعم والترفيه في بيئة مفتوحة نابضة بالحياة. يركّز المفهوم المعماري على الترابط عبر ممرات مشاة مظلّلة وشرفات مرتفعة وساحات عامة ترحيبية تشجّع على التفاعل الاجتماعي. ويمنح المزيج المدروس من الفولاذ والخشب الطبيعي والحجر والمساحات الخضراء الوارفة هوية مميّزة للمشروع، فيما تعزّز العناصر المائية المدمجة واستراتيجيات التظليل السلبي الراحة وتُثري تجربة الزائر على مدار العام.",
+      ar: "صُمّم ظُلل ليكون وجهة معاصرة لأسلوب الحياة، يجمع بين تجارب التسوق والمطاعم والترفيه في بيئة مفتوحة نابضة بالحياة. يركّز المفهوم المعماري على الترابط عبر ممرات مشاة مظلّلة وشرفات مرتفعة وساحات عامة ترحيبية تشجّع على التفاعل الاجتماعي. ويمنح المزيج المدروس من الفولاذ والخشب الطبيعي والحجر والمساحات الخضراء الوارفة هوية مميّزة للمشروع، فيما تعزّز العناصر المائية المدمجة واستراتيجيات التظليل السلبي الراحة وتُثري تجربة الزائر على مدار العام.",
     },
     heroImage: "/images/projects/tholal/hero.webp",
     gallery: [
