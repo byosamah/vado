@@ -153,8 +153,13 @@ export default function ServicesTabs({
               <div className="flex h-full">
                 {/* Vertical Title - Always visible */}
                 <div className="flex items-end justify-start p-6 min-w-[60px]">
+                  {/* service-vtitle carries the Arabic-only leading bump. In
+                      vertical writing-mode the line box WIDTH is the
+                      line-height, so that value is the only room the glyphs get
+                      across the stem, and Arabic descenders overflow the 1.45
+                      heading leading. See globals.css. */}
                   <h3
-                    className="whitespace-nowrap"
+                    className="service-vtitle whitespace-nowrap"
                     style={{
                       writingMode: "vertical-lr",
                       transform: "rotate(180deg)",

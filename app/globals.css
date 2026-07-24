@@ -211,6 +211,28 @@ html[lang="ar"] body {
 }
 
 /*
+ * Vertical service titles (the ServicesTabs desktop accordion).
+ *
+ * In vertical writing-mode the line box WIDTH is the line-height, so that one
+ * value is all the room the glyphs get across the stem. Measured against the
+ * real font: Latin ink for these strings needs ~0.90em and clears its 1.2
+ * leading comfortably, but Arabic ink needs up to ~1.40em and its DESCENDERS
+ * (ي ج ع) fall outside a 1.45 line box by as much as 7px. The column's
+ * overflow-hidden then shears them, which is what made the titles look cut.
+ *
+ * That overflow-hidden is load-bearing: it clips the expanding panel's image
+ * and text while the column animates its width. So the box is widened to fit
+ * the glyphs rather than the clip being removed. 2 clears all four titles with
+ * room to spare; 1.9 clears the worst one by only 0.6px, which is too tight to
+ * survive a copy change.
+ *
+ * Scoped to Arabic so the English accordion keeps its exact geometry.
+ */
+html[lang="ar"] .service-vtitle {
+  line-height: 2;
+}
+
+/*
  * Latin runs inside an Arabic page (emails, URLs, phone numbers, the wordmark)
  * should stay left-to-right even though the paragraph flows right-to-left.
  * `dir="ltr"` on the element handles direction; this keeps such runs isolated
