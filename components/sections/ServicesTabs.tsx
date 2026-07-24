@@ -50,6 +50,7 @@ import {
   prefersReducedMotion,
   directionSign,
 } from "@/lib/gsap/gsap";
+import { isRtl, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 /** Project imagery paired with each discipline, keyed by the service id. */
@@ -64,8 +65,10 @@ const SERVICE_IMAGES: Record<string, string> = {
 const DEFAULT_ID = "site-supervision";
 
 export default function ServicesTabs({
+  lang,
   services,
 }: {
+  lang: Locale;
   services: Dictionary["services"];
 }) {
   // Section root for the shared reveal engine.
@@ -152,17 +155,26 @@ export default function ServicesTabs({
               {/* Content Container */}
               <div className="flex h-full">
                 {/* Vertical Title - Always visible */}
-                <div className="flex items-end justify-start p-6 min-w-[60px]">
-                  {/* service-vtitle carries the Arabic-only leading bump. In
-                      vertical writing-mode the line box WIDTH is the
-                      line-height, so that value is the only room the glyphs get
-                      across the stem, and Arabic descenders overflow the 1.45
-                      heading leading. See globals.css. */}
+                {/* shrink-0: min-w-[60px] overrides a flex item's automatic
+                    min-content floor, so without this the wrapper could be
+                    squeezed narrower than the title in a tight column. */}
+                <div className="flex items-end justify-start p-6 min-w-[60px] shrink-0">
+                  {/* The whole vertical treatment lives here, inline, as one
+                      unit. In vertical writing-mode `line-height` stops being
+                      leading and becomes the line box WIDTH: the only room the
+                      glyphs get across the stem. Latin ink needs ~0.90em and
+                      clears 1.2; Arabic ink needs ~1.40em and its descenders
+                      fall outside the 1.45 Arabic heading leading, so the
+                      column's overflow-hidden shears them. Inline rather than a
+                      CSS class so it cannot drift from the writing-mode it
+                      belongs to, and cannot be beaten by the un-layered global
+                      h1-h6 line-height rule. */}
                   <h3
-                    className="service-vtitle whitespace-nowrap"
+                    className="whitespace-nowrap"
                     style={{
                       writingMode: "vertical-lr",
                       transform: "rotate(180deg)",
+                      lineHeight: isRtl(lang) ? 2 : undefined,
                     }}
                   >
                     {service.name}
