@@ -86,6 +86,8 @@ Beyond the homepage there are real routes: `/about`, `/services`, `/projects` (i
 
 **Section Structure**: Each section is self-contained with its own data, styling, and animations. No shared state between sections.
 
+**Spacing rhythm**: 24px kicker→headline (`mt-6`), 40px headline→body/CTA (`mt-10`). Interactive elements get ≥44px hit areas: `py-* -my-*` hit-slop on inline links, flush `py-2` stacks (no `space-y`) in link lists.
+
 **Typography**: Two-face system: **Schibsted Grotesk** (display/headings, wght 500) plus **IBM Plex Sans** (body/labels), loaded via `next/font/google` in `app/layout.tsx`; tokens `--font-display`/`--font-body` in globals.css. IBM Plex Sans Arabic is the intended RTL sibling. Global `h1`–`h6` styles in globals.css; responsive at 1200/768/480px.
 
 **Images**: Optimized `.webp` via `next/image` (not raw `<img>` or CSS backgrounds). Project images in `public/images/projects/<slug>/` as `hero.webp` plus `gallery-NN.webp`; project data centralized in `lib/projects.ts` (drives the homepage carousel and `/projects/[slug]` pages). Convert sources: `cwebp -resize <w> 0 -q 82 -m 6 in.png -o out.webp`.
@@ -93,7 +95,7 @@ Beyond the homepage there are real routes: `/about`, `/services`, `/projects` (i
 ## Gotchas
 
 - **Turbopack panic** (Next 16): dev can crash with "Failed to write app endpoint" / ChunkLoadError. Fix: `rm -rf .next` then restart.
-- **Pre-existing lint**: a few `react/no-unescaped-entities` errors (apostrophes/quotes in CTABanner, QuoteBlock) predate current work, not introduced by your changes.
+- **Pre-existing lint**: one `react-hooks/refs` error in HeroSlider's `contextSafe` slide handler (GSAP wiring; don't chase it casually) plus `<img>` warnings in Header/BlogGrid. Not introduced by your changes.
 - **No styled-jsx** (`<style jsx>`): under Turbopack SSR it rewrites multi-line `className` strings on host elements into invalid JS, causing a `SyntaxError`/500 that `tsc` does NOT catch. Keep global CSS in `app/globals.css`.
 - `npx tsc --noEmit` checks types only. Confirm SSR by loading the dev server; a real render catches runtime/SSR errors tsc misses.
 - `<html>` uses `suppressHydrationWarning` because the inline `ANIM_BOOT` script adds `.anim-ready` client-side only.
