@@ -28,7 +28,7 @@ import {
   OG_IMAGE,
 } from "@/lib/site";
 import { absoluteUrl } from "@/lib/seo";
-import { LOCALES, type Locale } from "@/lib/i18n/config";
+import { LOCALES, LOGOS, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Project } from "@/lib/projects";
 
@@ -49,7 +49,9 @@ export function organizationSchema(locale: Locale, dict: Dictionary) {
     legalName: dict.brand.legalName,
     alternateName: dict.brand.legalName,
     url: absoluteUrl(locale, "/"),
-    logo: `${SITE_URL}/logo.svg`,
+    // The edition's own wordmark, so an Arabic knowledge panel shows the Arabic
+    // lockup rather than the Latin one.
+    logo: `${SITE_URL}${LOGOS[locale]}`,
     image: `${SITE_URL}${OG_IMAGE.url}`,
     description: dict.meta.longDescription,
     foundingDate: FOUNDING_YEAR,

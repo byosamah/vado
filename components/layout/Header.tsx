@@ -22,7 +22,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { localePath, stripLocale, type Locale } from "@/lib/i18n/config";
+import {
+  LOGOS,
+  LOGO_SIZE_CLASSES,
+  localePath,
+  stripLocale,
+  type Locale,
+} from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 interface HeaderProps {
@@ -116,12 +122,18 @@ export default function Header({
         <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
           <Link href={localePath(lang, "/")} className="flex items-center min-h-11">
+            {/* Locale wordmark. Sized by WIDTH (see LOGO_SIZE_CLASSES): the two
+                files share one coordinate space, so equal widths keep the
+                V-mark at an identical scale, while equal heights would shrink
+                the Arabic one. Both files use the same #582f37, and the
+                brightness-0 invert below flattens either to white on a dark
+                header, so the colour behaviour is identical in both editions. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.svg"
+              src={LOGOS[lang]}
               alt={nav.logoAlt}
               className={`
-                h-8 md:h-10 w-auto
+                ${LOGO_SIZE_CLASSES}
                 transition-all duration-300
                 ${isMobileMenuOpen || (!forceSolid && !isScrolled) ? "brightness-0 invert" : ""}
               `}

@@ -53,6 +53,28 @@ export const OG_LOCALES: Record<Locale, string> = {
   ar: "ar_SA",
 };
 
+/**
+ * The wordmark asset per locale. Both files are drawn in ONE coordinate space
+ * (the V-mark path data is byte-identical between them), so they must be sized
+ * by WIDTH, never height: the Arabic artboard is taller (912x393 vs 912x326),
+ * and matching heights would render the Arabic mark about 17% smaller than the
+ * English one. Both carry the same brand colour, #582f37.
+ *
+ * Typed as a full Record, so adding a locale without adding its logo fails the
+ * build rather than silently falling back to English.
+ */
+export const LOGOS: Record<Locale, string> = {
+  en: "/logo.svg",
+  ar: "/logo-ar.svg",
+};
+
+/**
+ * Shared wordmark box. Width-based for the reason above; the heights this
+ * produces for the Latin mark (32px and 40px) are the values it has always
+ * rendered at, so the English header is pixel-unchanged.
+ */
+export const LOGO_SIZE_CLASSES = "w-[90px] md:w-[112px] h-auto";
+
 /** Narrowing guard for untrusted input (route params, path segments). */
 export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && (LOCALES as readonly string[]).includes(value);
