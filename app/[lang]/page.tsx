@@ -98,7 +98,7 @@ export default async function Home({
         />
 
         {/* Services Tabs - Tabbed content section */}
-        <ServicesTabs lang={lang} services={dict.services} />
+        <ServicesTabs services={dict.services} />
 
         {/* Quote - Large typography centered quote */}
         <QuoteBlock quote={dict.home.quote} />

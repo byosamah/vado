@@ -50,7 +50,6 @@ import {
   prefersReducedMotion,
   directionSign,
 } from "@/lib/gsap/gsap";
-import { isRtl, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 /** Project imagery paired with each discipline, keyed by the service id. */
@@ -65,10 +64,8 @@ const SERVICE_IMAGES: Record<string, string> = {
 const DEFAULT_ID = "site-supervision";
 
 export default function ServicesTabs({
-  lang,
   services,
 }: {
-  lang: Locale;
   services: Dictionary["services"];
 }) {
   // Section root for the shared reveal engine.
@@ -159,22 +156,22 @@ export default function ServicesTabs({
                     min-content floor, so without this the wrapper could be
                     squeezed narrower than the title in a tight column. */}
                 <div className="flex items-end justify-start p-6 min-w-[60px] shrink-0">
-                  {/* The whole vertical treatment lives here, inline, as one
-                      unit. In vertical writing-mode `line-height` stops being
-                      leading and becomes the line box WIDTH: the only room the
-                      glyphs get across the stem. Latin ink needs ~0.90em and
-                      clears 1.2; Arabic ink needs ~1.40em and its descenders
-                      fall outside the 1.45 Arabic heading leading, so the
-                      column's overflow-hidden shears them. Inline rather than a
-                      CSS class so it cannot drift from the writing-mode it
-                      belongs to, and cannot be beaten by the un-layered global
-                      h1-h6 line-height rule. */}
+                  {/* In vertical writing-mode `line-height` stops being leading
+                      and becomes the line box WIDTH: the only room the glyphs
+                      get across the stem. No override is needed here. Measured
+                      by pixel-scanning the rendered titles across 10 viewports:
+                      Arabic ink is ~1.12em and Latin ~0.90em, so each already
+                      clears its own heading leading (1.45 / 1.2) and lands at a
+                      near-identical optical offset from the column edge. An
+                      earlier `lineHeight: 2` here was an OVER-correction based
+                      on a bad estimate; it clipped nothing extra but shoved the
+                      Arabic title ~8px further off the edge than the English
+                      one. Do not reintroduce it without re-measuring. */}
                   <h3
                     className="whitespace-nowrap"
                     style={{
                       writingMode: "vertical-lr",
                       transform: "rotate(180deg)",
-                      lineHeight: isRtl(lang) ? 2 : undefined,
                     }}
                   >
                     {service.name}
